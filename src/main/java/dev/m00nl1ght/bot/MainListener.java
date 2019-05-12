@@ -5,18 +5,12 @@ import com.gikk.twirk.events.TwirkListener;
 import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.users.TwitchUser;
 import dev.m00nl1ght.bot.commands.Command;
-import dev.m00nl1ght.bot.commands.core.CoreCommand;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import java.io.FileReader;
-import java.util.HashMap;
 
 public class MainListener implements TwirkListener {
 
     private final Twirk bot;
     private final Profile profile;
-    protected final HashMap<String, Command> commands = new HashMap<>();
+    protected final CommandManager commandManager = new CommandManager(this);
     protected final CommandParser parser = new CommandParser(this);
     protected boolean active = true;
 
@@ -30,7 +24,7 @@ public class MainListener implements TwirkListener {
         Command cmd = parser.parse(message);
         if (cmd != null) {
             if (cmd.canExecute(message)) {
-                Logger.log("CMD " + message.getContent());
+                Logger.log("CMD @" + message.getUser().getDisplayName() + " " + message.getContent());
                 try {
                     cmd.execute(parser);
                 } catch (Exception e) {
@@ -39,7 +33,7 @@ public class MainListener implements TwirkListener {
                     sendResponse(message.getUser(), "Sorry, an unknown error occured.");
                 }
             } else {
-                Logger.log("CMD -denied " + message.getContent());
+                Logger.log("CMD -denied @" + message.getUser().getDisplayName() + " " + message.getContent());
                 cmd.onDenied(message);
             }
         }
@@ -85,29 +79,22 @@ public class MainListener implements TwirkListener {
     }
 
     public void exit() {
-        Logger.log("Shutting down, as requested by command...");
+        Logger.log("Shutting down...");
         bot.close();
-    }
-
-    public void load() {
-        commands.clear();
-        if (profile.CORE.exists()) {
-            try {
-                JSONTokener tokener = new JSONTokener(new FileReader(profile.CORE));
-                JSONObject object = new JSONObject(tokener);
-
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to load commands!", e);
-            }
-        } else {
-            Logger.log("Core profile does not exist, creating default one.");
-            commands.put("mb", new CoreCommand(this, "mb"));
-            this.save();
-        }
+        this.save();
+        Logger.log("Finished.");
     }
 
     public void save() {
+        commandManager.save(profile.CORE);
+    }
 
+    public void load() {
+        commandManager.load(profile.CORE);
+    }
+
+    public void backup() {
+        commandManager.save(profile.backupFile());
     }
 
 }

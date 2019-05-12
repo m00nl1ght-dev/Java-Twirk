@@ -10,7 +10,7 @@ public abstract class Command {
 
     protected final MainListener parent;
     protected final String name;
-    protected USER_LEVEL perm;
+    protected USER_LEVEL perm = USER_LEVEL.DEFAULT;
     protected boolean verboseFeedback = true;
 
     protected Command(MainListener parent, String name) {

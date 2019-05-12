@@ -16,10 +16,11 @@ public class CommandParser {
 
     public Command parse(TwitchMessage source) {
         if (!source.getContent().startsWith("!")) return null;
-        data = source.getContent(); pos = 1;
+        this.source = source;
+        this.data = source.getContent(); pos = 1;
         while (pos < data.length() && !Character.isWhitespace(data.charAt(pos))) {pos++;}
         if (pos <= 1) return null;
-        return parent.commands.get(data.substring(1, pos));
+        return parent.commandManager.getCommand(data.substring(1, pos).toLowerCase());
     }
 
     public String nextParam() {

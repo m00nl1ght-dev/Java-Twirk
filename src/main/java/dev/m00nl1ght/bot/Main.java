@@ -9,25 +9,20 @@ import java.io.IOException;
 public class Main {
 
     private static final String DEFAULT_PROFILE = "bot_testing";
+    private static final File PROFILE_DIR = new File("profile");
 
     public static void main(String[] args) throws IOException, InterruptedException {
 
-        final Profile config = new Profile(new File(args.length > 0 ? args[0] : DEFAULT_PROFILE));
+        final Profile config = new Profile(new File(PROFILE_DIR, args.length > 0 ? args[0] : DEFAULT_PROFILE));
         config.load();
 
         final Twirk bot = new TwirkBuilder("#" + config.CHANNEL, config.USERNAME, config.OAUTH).setBotOwner(config.OWNER).build();
         final MainListener core = new MainListener(bot, config);
         core.load();
         bot.addIrcListener(core);
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdown(bot)));
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> core.exit()));
         bot.connect();
 
-    }
-
-    public static void shutdown(Twirk bot) {
-        Logger.log("Shutting down...");
-        bot.close();
-        Logger.log("Finished.");
     }
 
 }

@@ -3,19 +3,12 @@ package dev.m00nl1ght.bot.commands.core;
 import com.gikk.twirk.enums.USER_LEVEL;
 import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import dev.m00nl1ght.bot.MainListener;
-import dev.m00nl1ght.bot.commands.ComplexCommand;
+import dev.m00nl1ght.bot.commands.Command;
 
-public class CoreCommand extends ComplexCommand {
+public abstract class CoreSubCommand extends Command {
 
-    public CoreCommand(MainListener parent, String name) {
+    protected CoreSubCommand(MainListener parent, String name) {
         super(parent, name);
-        this.perm = USER_LEVEL.OWNER;
-        this.addSubCommand(new CmdStart(parent, "start"));
-        this.addSubCommand(new CmdStop(parent, "stop"));
-        this.addSubCommand(new CmdExit(parent, "exit"));
-        this.addSubCommand(new CmdReload(parent, "reload"));
-        this.addSubCommand(new CmdSave(parent, "save"));
-        this.addSubCommand(new CmdBackup(parent, "backup"));
     }
 
     @Override

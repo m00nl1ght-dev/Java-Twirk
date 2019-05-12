@@ -20,6 +20,7 @@ public abstract class ComplexCommand extends Command {
         Command cmd = sub.get(sc);
         if (sc.isEmpty() || cmd == null) {
             parent.sendResponse("@" + parser.getSource().getUser().getDisplayName() + " Usage: " + printUsage());
+            return;
         }
         if (cmd.canExecute(parser.getSource())) {
             cmd.execute(parser);

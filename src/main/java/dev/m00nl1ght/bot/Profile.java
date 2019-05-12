@@ -6,10 +6,14 @@ import org.json.JSONTokener;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Profile {
 
-	protected final File CONFIG, CORE;
+    private final static SimpleDateFormat bakFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+
+	protected final File CONFIG, CORE, BASE;
 
 	public String USERNAME;
 	public String OAUTH;
@@ -20,6 +24,7 @@ public class Profile {
 	public int RECONNECT_DELAY_MAX;
 
 	public Profile(File base) {
+	    BASE = base;
 		CONFIG = new File(base, "config.json");
         CORE = new File(base, "core.json");
 	}
@@ -61,4 +66,8 @@ public class Profile {
         }
 	}
 
+    public File backupFile() {
+        String dateString = bakFormat.format(new Date());
+	    return new File(BASE, "core-" + dateString + ".json");
+    }
 }
