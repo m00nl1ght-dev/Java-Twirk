@@ -9,6 +9,7 @@ import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.usernotice.Usernotice;
 import com.gikk.twirk.types.users.TwitchUser;
 import com.gikk.twirk.types.users.Userstate;
+
 import java.util.Collection;
 
 public interface TwirkListener {
@@ -24,7 +25,7 @@ public interface TwirkListener {
 	 * @param sender The user who sent the message. Parsed from the incoming message's tag
 	 * @param message The message that was sent, with the tag removed
 	 */
-    default public void onPrivMsg( TwitchUser  sender, TwitchMessage  message ) {}
+    default public void onPrivMsg( TwitchMessage  message ) {}
 
 	/**Fires for incoming WHISPER to the bot. Please note that a whisper does
          * not target a channel, and does not come from a channel. Thus, the flags
@@ -36,7 +37,7 @@ public interface TwirkListener {
 	 * @param sender The user who sent the message. Parsed from the incoming message's tag
 	 * @param message The message that was sent, with the tag removed
 	 */
-	default public void onWhisper( TwitchUser  sender, TwitchMessage  message ) {}
+	default public void onWhisper( TwitchMessage  message ) {}
 
 	/**Fires when the bot receives a JOIN from Twitch. Note that Twitch sometimes drops
 	 * PART messages, so we might receive a JOIN from a user who we never saw PART. Another

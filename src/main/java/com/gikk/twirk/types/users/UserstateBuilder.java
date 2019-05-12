@@ -9,8 +9,8 @@ import com.gikk.twirk.types.twitchMessage.TwitchMessage;
  */
 public interface UserstateBuilder {
 
-    public static UserstateBuilder getDefault() {
-        return new DefaultUserstateBuilder();
+    public static UserstateBuilder getDefault(String botOwner) {
+        return new DefaultUserstateBuilder(botOwner);
     }
 
 	/**Constructs a new {@link Userstate} object from a {@link TwitchMessage}, received from Twitch. The user

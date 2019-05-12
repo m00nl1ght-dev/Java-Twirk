@@ -10,9 +10,10 @@ import com.gikk.twirk.types.twitchMessage.TwitchMessageBuilder;
 import com.gikk.twirk.types.usernotice.UsernoticeBuilder;
 import com.gikk.twirk.types.users.TwitchUserBuilder;
 import com.gikk.twirk.types.users.UserstateBuilder;
+
+import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.net.Socket;
-import javax.net.ssl.SSLSocketFactory;
 
 /**Class for creating instances of {@link Twirk}.<br>
  * To build an instance of {@link Twirk}, the user has to supply the bot's nick and
@@ -39,6 +40,7 @@ public class TwirkBuilder {
 	String nick = "";
 	String oauth = "";
 	String channel = "";
+	String ownerName = "";
 
 	private ClearChatBuilder 	clearChatBuilder;
 	private HostTargetBuilder 	hostTargetBuilder;
@@ -89,6 +91,11 @@ public class TwirkBuilder {
 	 */
 	public TwirkBuilder setPort(int port){
 		this.port = port;
+		return this;
+	}
+
+	public TwirkBuilder setBotOwner(String ownerName) {
+		this.ownerName = ownerName;
 		return this;
 	}
 
@@ -291,7 +298,7 @@ public class TwirkBuilder {
 	 * @return This builders current {@link TwitchUserBuilder}
 	 */
 	public TwitchUserBuilder getTwitchUserBuilder() {
-		return twitchUserBuilder != null ? twitchUserBuilder : TwitchUserBuilder.getDefault();
+		return twitchUserBuilder != null ? twitchUserBuilder : TwitchUserBuilder.getDefault(ownerName);
 	}
 
 	/**Retrieves the assigned {@link UserstateBuilder}, or the default one, if none is assigned.
@@ -299,7 +306,7 @@ public class TwirkBuilder {
 	 * @return This builders current {@link UserstateBuilder}
 	 */
 	public UserstateBuilder getUserstateBuilder() {
-		return userstateBuilder != null ? userstateBuilder : UserstateBuilder.getDefault();
+		return userstateBuilder != null ? userstateBuilder : UserstateBuilder.getDefault(ownerName);
 	}
 
 	/**Retrieves the assigned {@link UsernoticeBuilder}, or the default one, if none is assigned.

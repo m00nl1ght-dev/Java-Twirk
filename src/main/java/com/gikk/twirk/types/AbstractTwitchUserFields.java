@@ -1,6 +1,6 @@
 package com.gikk.twirk.types;
 
-import com.gikk.twirk.enums.USER_TYPE;
+import com.gikk.twirk.enums.USER_LEVEL;
 import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.users.Userstate;
 
@@ -14,18 +14,17 @@ public abstract class AbstractTwitchUserFields {
 	private static final int[] DEFAULT_COLORS = { 0xFF0000, 0x0000FF, 0x00FF00, 0xB22222, 0xFF7F50,
 												  0x9ACD32, 0xFF4500, 0x2E8B57, 0xDAA520, 0xD2691E,
 												  0x5F9EA0, 0x1E90FF, 0xFF69B4, 0x8A2BE2, 0x00FF7F };
+	private static final String[] EMPTY = new String[0];
+
 	public  String[]  badges;
+	public  String[]  badge_info;
     public  int       bits;
     public  String    userName;
 	public  String 	  displayName;
 	public  int 	  color;
 	public  long 	  userID;
 	public  int[] 	  emoteSets;
-    public  boolean   isOwner;
-	public  boolean   isMod;
-	public  boolean   isSub;
-	public  boolean   isTurbo;
-	public  USER_TYPE userType;
+	public  USER_LEVEL userLevel;
 	public  Userstate userstate;
 	public  String 	  rawLine;
 
@@ -49,21 +48,21 @@ public abstract class AbstractTwitchUserFields {
 						   ? Character.toUpperCase( userName.charAt(0) ) + userName.substring(1)
 						   : temp;
 		temp = r.getAsString(TwitchTags.BADGES);
-		this.badges = temp.isEmpty() ? new String[0] : temp.split(",");
+		this.badges = temp.isEmpty() ? EMPTY : temp.split(",");
+		temp = r.getAsString(TwitchTags.BADGE_INFO);
+		this.badge_info = temp.isEmpty() ? EMPTY : temp.split(",");
 
-		this.isMod   = r.getAsBoolean(TwitchTags.IS_MOD);
-		this.isSub   = r.getAsBoolean(TwitchTags.IS_SUB);
-		this.isTurbo = r.getAsBoolean(TwitchTags.IS_TURBO);
 		this.userID = r.getAsLong(TwitchTags.USER_ID);
 		this.color  = r.getAsInt(TwitchTags.COLOR);
 		this.color = this.color == -1 ? getDefaultColor() : this.color;
 
 		this.emoteSets = parseEmoteSets( r.getAsString(TwitchTags.EMOTE_SET) );
-		this.userType  = parseUserType(  r.getAsString(TwitchTags.USERTYPE), displayName, channelOwner, isSub || isTurbo);
+		this.userLevel = parseUserType(displayName.equalsIgnoreCase(channelOwner) || isOwner(displayName));
 
-        this.isOwner = this.userType == USER_TYPE.OWNER;
 		this.rawLine = message.getRaw();
 	}
+
+	protected abstract boolean isOwner(String userName);
 
 	private int[] parseEmoteSets(String emoteSet) {
 		if( emoteSet.isEmpty() ) {
@@ -80,22 +79,25 @@ public abstract class AbstractTwitchUserFields {
 		return out;
 	}
 
-	private USER_TYPE parseUserType(String userType, String sender, String channelOwner, boolean isSub) {
-		if( sender.equalsIgnoreCase( channelOwner ) ) {
-            return USER_TYPE.OWNER;
-        } else if( userType.equals( "mod" ) ) {
-            return USER_TYPE.MOD;
-        } else if( userType.equals( "global_mod" ) ) {
-            return USER_TYPE.GLOBAL_MOD;
-        } else if( userType.equals( "admin" ) ) {
-            return USER_TYPE.ADMIN;
-        } else if( userType.equals( "staff" ) ) {
-            return USER_TYPE.STAFF;
-        } else if( isSub ) {
-            return USER_TYPE.SUBSCRIBER;
-        } else {
-            return USER_TYPE.DEFAULT;
+	private USER_LEVEL parseUserType(boolean isOwner) {
+		if (isOwner) {
+            return USER_LEVEL.OWNER;
         }
+		for (String b : badges) {
+			if(b.startsWith("moderator/")) return USER_LEVEL.MOD;
+			if(b.startsWith("vip/")) return USER_LEVEL.VIP;
+		}
+		for (String b : badge_info) {
+			if(b.startsWith("subscriber/")) {
+				int months = Integer.parseInt(b.split("/")[1]);
+				if (months >= 24) return USER_LEVEL.SUBSCRIBER_24;
+				if (months >= 12) return USER_LEVEL.SUBSCRIBER_12;
+				if (months >= 6) return USER_LEVEL.SUBSCRIBER_6;
+				if (months >= 3) return USER_LEVEL.SUBSCRIBER_3;
+				if (months >= 1) return USER_LEVEL.SUBSCRIBER;
+			}
+		}
+		return USER_LEVEL.DEFAULT;
 	}
 
 	private int getDefaultColor(){

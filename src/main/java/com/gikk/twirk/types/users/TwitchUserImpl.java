@@ -1,6 +1,6 @@
 package com.gikk.twirk.types.users;
 
-import com.gikk.twirk.enums.USER_TYPE;
+import com.gikk.twirk.enums.USER_LEVEL;
 
 
 class TwitchUserImpl implements TwitchUser{
@@ -9,14 +9,11 @@ class TwitchUserImpl implements TwitchUser{
 	//***********************************************************
     private final String userName;
 	private final String displayName;
-    private final boolean isOwner;
-	private final boolean isMod;
-	private final boolean isSub;
-	private final boolean isTurbo;
 	private final int color;
 	private final long userID;
-	private final USER_TYPE userType;
+	private final USER_LEVEL userLevel;
 	private final String[] badges;
+	private final String[] badge_info;
 
 	//***********************************************************
 	// 				CONSTRUCTOR
@@ -25,13 +22,10 @@ class TwitchUserImpl implements TwitchUser{
 	TwitchUserImpl(DefaultTwitchUserBuilder builder) {
         this.userName    = builder.userName;
 		this.displayName = builder.displayName;
-        this.isOwner     = builder.isOwner;
-		this.isMod 		 = builder.isMod;
-		this.isSub 		 = builder.isSub;
-		this.isTurbo 	 = builder.isTurbo;
 		this.badges 	 = builder.badges;
+		this.badge_info  = builder.badge_info;
 		this.userID 	 = builder.userID;
-		this.userType 	 = builder.userType;
+		this.userLevel 	 = builder.userLevel;
 		this.color 	 	 = builder.color;
 	}
 
@@ -51,27 +45,32 @@ class TwitchUserImpl implements TwitchUser{
 
     @Override
     public boolean isOwner() {
-        return isOwner;
+        return hasPermission(USER_LEVEL.OWNER);
     }
 
     @Override
 	public boolean isMod(){
-		return isMod;
+		return hasPermission(USER_LEVEL.MOD);
 	}
 
     @Override
 	public boolean isTurbo(){
-		return isTurbo;
+		return hasBadge("turbo");
 	}
 
     @Override
 	public boolean isSub(){
-		return isSub;
+		return hasPermission(USER_LEVEL.SUBSCRIBER);
 	}
 
     @Override
-	public USER_TYPE getUserType(){
-		return userType;
+	public USER_LEVEL getUserLevel() {
+		return userLevel;
+	}
+
+	@Override
+	public boolean hasPermission(USER_LEVEL level) {
+		return userLevel.value >= level.value;
 	}
 
     @Override
@@ -83,6 +82,31 @@ class TwitchUserImpl implements TwitchUser{
 	public String[] getBadges(){
 		return badges;
 	}
+
+	@Override
+	public boolean hasBadge(String id) {
+		for (String b : badges) {
+			if (b.startsWith(id + "/")) return true;
+		}
+		return false;
+	}
+
+	@Override
+	public int getBadge(String id) {
+		for (String b : badges) {
+			if (b.startsWith(id + "/")) return Integer.parseInt(b.split("/")[1]);
+		}
+		return -1;
+	}
+
+	@Override
+	public int getBadgeInfo(String id) {
+		for (String b : badge_info) {
+			if (b.startsWith(id + "/")) return Integer.parseInt(b.split("/")[1]);
+		}
+		return -1;
+	}
+
     @Override
 	public long getUserID(){
 		return userID;

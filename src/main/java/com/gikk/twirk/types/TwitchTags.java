@@ -31,6 +31,8 @@ public class TwitchTags {
 	 */
 	public static final String BADGES 		= "badges";
 
+	public static final String BADGE_INFO 	= "badge-info";
+
     /**Denotes the number of bits that was cheered in this message
      */
     public static final String BITS         = "bits";

@@ -16,7 +16,7 @@ public interface TwitchUserBuilder {
 	 */
 	public TwitchUser build(TwitchMessage message);
 
-    static TwitchUserBuilder getDefault(){
-        return new DefaultTwitchUserBuilder();
+    static TwitchUserBuilder getDefault(String ownerName){
+        return new DefaultTwitchUserBuilder(ownerName);
     }
 }

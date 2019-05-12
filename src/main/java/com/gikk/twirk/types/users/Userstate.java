@@ -1,6 +1,6 @@
 package com.gikk.twirk.types.users;
 
-import com.gikk.twirk.enums.USER_TYPE;
+import com.gikk.twirk.enums.USER_LEVEL;
 import com.gikk.twirk.types.AbstractType;
 
 /**Class for representing a CLEARCHAT from Twitch.<br><br>
@@ -43,18 +43,14 @@ public interface Userstate extends AbstractType{
 	 */
 	public boolean isSub();
 	
-	/**Retrieves information on whether we have Turbo, or not
-	 * 
-	 * @return <code>true</code> if we have turbo
-	 */
-	public boolean isTurbo();
-	
 	/**Retrieves information on what type of user we are in this channel. See {@link USER_TYPE}
 	 * 
 	 * @return Our {@link USER_TYPE}
 	 */
-	public USER_TYPE getUserType();
-	
+	public USER_LEVEL getUserLevel();
+
+	public boolean hasPermission(USER_LEVEL level);
+
 	/**Retrieves the emote sets that are available to this account. You can uses the emote set's names to request information
 	 * about those emotes from Twitch.<br><br>
 	 * 

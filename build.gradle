@@ -1,0 +1,25 @@
+plugins {
+    id 'java'
+}
+
+group 'm00nl1ght.bot'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.json', name: 'json', version: '20090211'
+}
+
+task customFatJar(type: Jar) {
+    manifest {
+        attributes 'Main-Class': 'dev.m00nl1ght.bot.Main'
+    }
+    baseName = 'bot'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}

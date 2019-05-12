@@ -1,6 +1,6 @@
 package com.gikk.twirk.types.users;
 
-import com.gikk.twirk.enums.USER_TYPE;
+import com.gikk.twirk.enums.USER_LEVEL;
 import com.gikk.twirk.events.TwirkListener;
 
 /**Class for representing information about a user<br>
@@ -16,20 +16,14 @@ class UserstateImpl implements Userstate {
 	
 	private final int color;
 	private final String displayName;
-	private final boolean isMod;
-	private final boolean isSub;
-	private final boolean isTurbo;
-	private final USER_TYPE userType;
+	private final USER_LEVEL userLevel;
 	private final int[] emoteSets;
 	private final String rawLine;
 	
 	UserstateImpl( DefaultUserstateBuilder builder ) {
 		this.color = builder.color;
 		this.displayName = builder.displayName;
-		this.isMod = builder.isMod;
-		this.isSub = builder.isSub;
-		this.isTurbo = builder.isTurbo;
-		this.userType = builder.userType;
+		this.userLevel = builder.userLevel;
 		this.emoteSets = builder.emoteSets;
 		this.rawLine = builder.rawLine;
 	}
@@ -45,23 +39,23 @@ class UserstateImpl implements Userstate {
 	}
 
 	@Override
-	public boolean isMod() {
-		return isMod;
+	public boolean isMod(){
+		return hasPermission(USER_LEVEL.MOD);
 	}
 
 	@Override
-	public boolean isSub() {
-		return isSub;
+	public boolean isSub(){
+		return hasPermission(USER_LEVEL.SUBSCRIBER);
 	}
 
 	@Override
-	public boolean isTurbo() {
-		return isTurbo;
+	public USER_LEVEL getUserLevel() {
+		return userLevel;
 	}
 
 	@Override
-	public USER_TYPE getUserType() {
-		return userType;
+	public boolean hasPermission(USER_LEVEL level) {
+		return userLevel.value >= level.value;
 	}
 
 	@Override

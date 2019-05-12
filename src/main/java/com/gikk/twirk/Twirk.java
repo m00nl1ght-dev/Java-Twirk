@@ -20,19 +20,11 @@ import com.gikk.twirk.types.users.TwitchUser;
 import com.gikk.twirk.types.users.TwitchUserBuilder;
 import com.gikk.twirk.types.users.Userstate;
 import com.gikk.twirk.types.users.UserstateBuilder;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
+
+import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**Class for communicating with the TwitchIrc chat.<br>
@@ -65,6 +57,7 @@ public final class Twirk {
 	private final String nick;
 	private final String pass;
 	private final String channel;
+	private final String ownerName;
 	final boolean verboseMode;
 
 	private OutputThread outThread;
@@ -100,6 +93,7 @@ public final class Twirk {
 		this.nick = builder.nick;
 		this.pass = builder.oauth;
 		this.channel = builder.channel;
+		this.ownerName = builder.ownerName;
 		this.verboseMode = builder.verboseMode;
 
 		this.clearChatBuilder = builder.getClearChatBuilder();
@@ -241,6 +235,10 @@ public final class Twirk {
 	 */
 	public String getNick() {
 		return nick;
+	}
+
+	public String getOwnerName() {
+		return ownerName;
 	}
 
 	/**Adds a specific listener to the list of active listeners
@@ -441,7 +439,7 @@ public final class Twirk {
 	void incommingMessage(String line){
 		//PING is a bit strange, so we need to handle it separately. And also, we want to respond to a ping
 		//before we do anything else.
-		if ( line.contains("PING") ) {
+		if ( line.startsWith("PING") ) {
 
     		// A PING contains the message "PING MESSAGE", and we want to reply with MESSAGE as well
     		// Hence, we reply "PONG MESSAGE" . That's where the substring(5) comes from bellow, we strip
@@ -497,17 +495,17 @@ public final class Twirk {
                 }
                 case "PRIVMSG":
                 {
-                    TwitchUser user = twitchUserBuilder.build(message);
+                    message.setUserBuilder(twitchUserBuilder);
                     for(TwirkListener l : listeners ) {
-                        l.onPrivMsg(user, message);
+                        l.onPrivMsg(message);
                     }
                     break;
                 }
 				case "WHISPER":
 				{
-					TwitchUser user = twitchUserBuilder.build(message);
+					message.setUserBuilder(twitchUserBuilder);
 					for(TwirkListener l : listeners ) {
-						l.onWhisper(user, message);
+						l.onWhisper(message);
 					}
 					break;
 				}

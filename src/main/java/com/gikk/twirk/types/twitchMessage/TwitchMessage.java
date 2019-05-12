@@ -4,6 +4,9 @@ import com.gikk.twirk.types.AbstractEmoteMessage;
 import com.gikk.twirk.types.TagMap;
 import com.gikk.twirk.types.TwitchTags;
 import com.gikk.twirk.types.cheer.Cheer;
+import com.gikk.twirk.types.users.TwitchUser;
+import com.gikk.twirk.types.users.TwitchUserBuilder;
+
 import java.util.List;
 
 /**An encapsulation of a message sent via Twitch chat. <br><br>
@@ -105,4 +108,9 @@ public interface TwitchMessage extends AbstractEmoteMessage {
      * For a list of different identifiers that can occur in a tag, check the {@link TwitchTags} class.
      */
     public TagMap getTagMap();
+
+    public TwitchUser getUser();
+
+    public void setUserBuilder(TwitchUserBuilder userBuilder);
+
 }

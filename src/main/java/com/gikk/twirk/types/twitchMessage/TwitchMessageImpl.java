@@ -4,6 +4,9 @@ import com.gikk.twirk.types.TagMap;
 import com.gikk.twirk.types.TwitchTags;
 import com.gikk.twirk.types.cheer.Cheer;
 import com.gikk.twirk.types.emote.Emote;
+import com.gikk.twirk.types.users.TwitchUser;
+import com.gikk.twirk.types.users.TwitchUserBuilder;
+
 import java.util.List;
 
 class TwitchMessageImpl implements TwitchMessage {
@@ -15,6 +18,8 @@ class TwitchMessageImpl implements TwitchMessage {
 	private final List<Emote> emotes;
     private final List<Cheer> cheers;
     private final TagMap tagMap;
+    private TwitchUserBuilder userBuilder;
+    private TwitchUser user;
 
 	//***********************************************************
 	// 				CONSTRUCTOR
@@ -93,6 +98,16 @@ class TwitchMessageImpl implements TwitchMessage {
     @Override
     public TagMap getTagMap() {
         return tagMap;
+    }
+
+    @Override
+    public TwitchUser getUser() {
+        return user == null && userBuilder != null ? userBuilder.build(this) : user;
+    }
+
+    @Override
+    public void setUserBuilder(TwitchUserBuilder userBuilder) {
+        this.userBuilder = userBuilder;
     }
 
     @Override
