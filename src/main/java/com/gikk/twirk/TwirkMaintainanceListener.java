@@ -1,5 +1,6 @@
 package com.gikk.twirk;
 
+import com.gikk.twirk.enums.USER_LEVEL;
 import com.gikk.twirk.events.TwirkListener;
 import com.gikk.twirk.types.mode.Mode;
 import com.gikk.twirk.types.mode.Mode.MODE_EVENT;
@@ -52,9 +53,9 @@ class TwirkMaintainanceListener implements TwirkListener {
 
     @Override
     public void onUserstate(Userstate userstate) {
-        //If the bot is a Mod, it may send 100 messages per 30 seconds
+        //If the bot is a Mod or VIP, it may send 100 messages per 30 seconds
         //None-Mods may send 20 messages per 30 seconds
-        if (userstate.isMod()) {
+        if (userstate.hasPermission(USER_LEVEL.VIP)) {
             instance.setOutputMessageDelay(30000 / 100);
         } else {
             instance.setOutputMessageDelay(30000 / 20);
