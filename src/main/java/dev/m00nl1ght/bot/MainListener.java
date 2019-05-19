@@ -10,8 +10,8 @@ public class MainListener implements TwirkListener {
 
     private final Twirk bot;
     private final Profile profile;
-    protected final CommandManager commandManager = new CommandManager(this);
-    protected final CommandParser parser = new CommandParser(this);
+    public final CommandManager commandManager = new CommandManager(this);
+    public final CommandParser parser = new CommandParser(this);
     protected boolean active = true;
 
     public MainListener(Twirk bot, Profile profile) {
@@ -23,29 +23,36 @@ public class MainListener implements TwirkListener {
     public void onPrivMsg(TwitchMessage message) {
         Command cmd = parser.parse(message);
         if (cmd != null) {
-            if (cmd.canExecute(message)) {
+            if (cmd.isOnCooldown()) return;
+            if (cmd.canExecute(parser)) {
                 Logger.log("CMD @" + message.getUser().getDisplayName() + " " + message.getContent());
+                cmd.resetCooldown();
                 try {
                     cmd.execute(parser);
+                } catch (CommandException ce) {
+                    Logger.warn("CER " + ce.getMessage());
+                    if (parser.verboseFeedback())
+                        parser.sendResponse("Error: " + ce.getMessage());
                 } catch (Exception e) {
-                    Logger.error("Exception thrown while executing command: " + message.getContent());
+                    Logger.error("CFE " + e.getMessage());
                     e.printStackTrace();
-                    sendResponse(message.getUser(), "Sorry, an unknown error occured.");
+                    if (parser.verboseFeedback())
+                        parser.sendResponse("Sorry, an unknown error occured.");
                 }
             } else {
                 Logger.log("CMD -denied @" + message.getUser().getDisplayName() + " " + message.getContent());
-                cmd.onDenied(message);
+                cmd.onDenied(parser);
             }
         }
     }
 
-    public void sendResponse(String msg) {
+    public void sendMessage(String msg) {
         Logger.log("OUT " + msg);
         bot.channelMessage(msg);
     }
 
-    public void sendResponse(TwitchUser user, String msg) {
-        sendResponse("@" + user.getDisplayName() + " " + msg);
+    public void sendMessage(TwitchUser user, String msg) {
+        sendMessage("@" + user.getDisplayName() + " " + msg);
     }
 
     @Override
@@ -59,12 +66,15 @@ public class MainListener implements TwirkListener {
         Logger.warn("Disconnected! Trying to reconnect...");
         while (true) {
             try {
-                if(bot.connect()) break;
+                if (bot.connect()) break;
             } catch (Exception e) {
                 e.printStackTrace();
             }
             Logger.warn("Failed to reconnect! Trying again in " + delay + " ms");
-            try {Thread.sleep(delay);} catch (Exception e) {}
+            try {
+                Thread.sleep(delay);
+            } catch (Exception e) {
+            }
             delay *= 2;
             if (delay > profile.RECONNECT_DELAY_MAX) delay = profile.RECONNECT_DELAY_MAX;
         }

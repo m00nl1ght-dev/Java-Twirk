@@ -3,10 +3,10 @@ package com.gikk.twirk.types.usernotice;
 import com.gikk.twirk.types.usernotice.subtype.SubscriptionGift;
 
 /**
- *
  * @author Gikkman
  */
-class SubscriptionGiftImpl implements SubscriptionGift{
+class SubscriptionGiftImpl implements SubscriptionGift {
+
     private final String recipiantUserName;
     private final String recipiantDisplayName;
     private final long RecipiantUserID;

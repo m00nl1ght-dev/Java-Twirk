@@ -15,6 +15,7 @@ public class Main {
 
         final Profile config = new Profile(new File(PROFILE_DIR, args.length > 0 ? args[0] : DEFAULT_PROFILE));
         config.load();
+        //config.save();
 
         final Twirk bot = new TwirkBuilder("#" + config.CHANNEL, config.USERNAME, config.OAUTH).setBotOwner(config.OWNER).build();
         final MainListener core = new MainListener(bot, config);

@@ -3,10 +3,10 @@ package com.gikk.twirk.types.cheer;
 import java.util.Objects;
 
 /**
- *
  * @author Gikkman
  */
-public class CheerImpl implements Cheer{
+public class CheerImpl implements Cheer {
+
     private final static String ROOT_URL = "static-cdn.jtvnw.net/bits/<theme>/<type>/<color>/<size>";
     private final int bits;
     private final String message;
@@ -28,7 +28,7 @@ public class CheerImpl implements Cheer{
 
     @Override
     public boolean equals(Object obj) {
-        if(!(obj instanceof Cheer)) {
+        if (!(obj instanceof Cheer)) {
             return false;
         }
         Cheer other = (Cheer) obj;
@@ -46,24 +46,24 @@ public class CheerImpl implements Cheer{
     @Override
     public String getImageURL(CheerTheme theme, CheerType type, CheerSize size) {
         String color;
-        if(bits < 100){
+        if (bits < 100) {
             color = "gray";
-        }
-        else if( bits < 1000) {
+        } else if (bits < 1000) {
             color = "purple";
-        } else if( bits < 5000) {
+        } else if (bits < 5000) {
             color = "green";
-        } else if( bits < 10000) {
+        } else if (bits < 10000) {
             color = "blue";
         } else {
             color = "red";
         }
         StringBuilder b = new StringBuilder(ROOT_URL);
         b.append("/").append(theme.getValue())
-         .append("/").append(type.getValue())
-         .append("/").append(color)
-         .append("/").append(size.getValue());
+                .append("/").append(type.getValue())
+                .append("/").append(color)
+                .append("/").append(size.getValue());
         return b.toString();
 
     }
+
 }

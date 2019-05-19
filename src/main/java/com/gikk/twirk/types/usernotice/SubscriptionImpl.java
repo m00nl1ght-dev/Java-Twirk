@@ -3,10 +3,10 @@ package com.gikk.twirk.types.usernotice;
 import com.gikk.twirk.types.usernotice.subtype.Subscription;
 import com.gikk.twirk.types.usernotice.subtype.SubscriptionGift;
 import com.gikk.twirk.types.usernotice.subtype.SubscriptionPlan;
+
 import java.util.Optional;
 
 /**
- *
  * @author Gikkman
  */
 class SubscriptionImpl implements Subscription {
@@ -38,10 +38,14 @@ class SubscriptionImpl implements Subscription {
     }
 
     @Override
-    public int getStreak() { return streak; }
+    public int getStreak() {
+        return streak;
+    }
 
     @Override
-    public boolean isSharedStreak() { return shareStreak; }
+    public boolean isSharedStreak() {
+        return shareStreak;
+    }
 
     @Override
     public String getSubscriptionPlanName() {
@@ -62,4 +66,5 @@ class SubscriptionImpl implements Subscription {
     public Optional<SubscriptionGift> getSubscriptionGift() {
         return subGift;
     }
+
 }

@@ -3,10 +3,9 @@ package com.gikk.twirk.types.usernotice;
 import com.gikk.twirk.types.usernotice.subtype.Ritual;
 
 /**
- *
  * @author Gikkman
  */
-class RitualImpl implements Ritual{
+class RitualImpl implements Ritual {
 
     private final String ritualName;
 
@@ -18,4 +17,5 @@ class RitualImpl implements Ritual{
     public String getRitualName() {
         return ritualName;
     }
+
 }

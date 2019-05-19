@@ -4,10 +4,11 @@ import com.gikk.twirk.types.emote.Emote;
 import com.gikk.twirk.types.usernotice.subtype.Raid;
 import com.gikk.twirk.types.usernotice.subtype.Ritual;
 import com.gikk.twirk.types.usernotice.subtype.Subscription;
+
 import java.util.List;
 import java.util.Optional;
 
-class UsernoticeImpl implements Usernotice{
+class UsernoticeImpl implements Usernotice {
 
     private final String raw;
 
@@ -23,7 +24,7 @@ class UsernoticeImpl implements Usernotice{
     private final int roomID;
     private final String messageID;
 
-    UsernoticeImpl(DefaultUsernoticeBuilder builder){
+    UsernoticeImpl(DefaultUsernoticeBuilder builder) {
         this.raw = builder.rawLine;
 
         this.raid = Optional.ofNullable(builder.raid);

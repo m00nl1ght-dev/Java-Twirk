@@ -5,30 +5,31 @@ import com.gikk.twirk.types.TagMap;
 import com.gikk.twirk.types.TwitchTags;
 import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 
-class DefaultClearChatBuilder implements ClearChatBuilder{
-	CLEARCHAT_MODE mode;
-	String target = "";
-	int duration = -1;
-	String reason = "";
-	String rawLine;
+class DefaultClearChatBuilder implements ClearChatBuilder {
 
-	@Override
-	public ClearChat build(TwitchMessage twitchMessage) {
-		this.rawLine = twitchMessage.getRaw();
+    CLEARCHAT_MODE mode;
+    String target = "";
+    int duration = -1;
+    String reason = "";
+    String rawLine;
 
-		if( twitchMessage.getContent().isEmpty() ){
-			this.mode = CLEARCHAT_MODE.COMPLETE;
-			this.target = "";
-		}
-		else{
-			this.mode = CLEARCHAT_MODE.USER;
-			this.target = twitchMessage.getContent();
+    @Override
+    public ClearChat build(TwitchMessage twitchMessage) {
+        this.rawLine = twitchMessage.getRaw();
 
-			TagMap r = twitchMessage.getTagMap();
-			this.duration = r.getAsInt(TwitchTags.BAN_DURATION);
-			this.reason = r.getAsString(TwitchTags.BAN_REASON);
-		}
+        if (twitchMessage.getContent().isEmpty()) {
+            this.mode = CLEARCHAT_MODE.COMPLETE;
+            this.target = "";
+        } else {
+            this.mode = CLEARCHAT_MODE.USER;
+            this.target = twitchMessage.getContent();
 
-		return new ClearChatImpl(this);
-	}
+            TagMap r = twitchMessage.getTagMap();
+            this.duration = r.getAsInt(TwitchTags.BAN_DURATION);
+            this.reason = r.getAsString(TwitchTags.BAN_REASON);
+        }
+
+        return new ClearChatImpl(this);
+    }
+
 }
