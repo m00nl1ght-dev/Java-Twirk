@@ -10,6 +10,7 @@ public class CommandParser {
 
     private final MainListener parent;
     private TwitchMessage source;
+    private boolean isWhisper = false;
     private String data;
     private int pos;
     private List<String> params = new ArrayList<>(10);
@@ -24,6 +25,7 @@ public class CommandParser {
         this.source = source;
         this.params.clear();
         this.data = source.getContent();
+        this.isWhisper = false;
         pos = 1;
         while (pos < data.length() && !Character.isWhitespace(data.charAt(pos))) {
             pos++;
@@ -31,6 +33,12 @@ public class CommandParser {
         if (pos <= 1) return null;
         this.command = parent.commandManager.getCommand(data.substring(1, pos).toLowerCase());
         return command;
+    }
+
+    public Command parseWhisper(TwitchMessage source) {
+        Command res = parse(source);
+        this.isWhisper = true;
+        return res;
     }
 
     public String getParam(int id) {
@@ -68,15 +76,27 @@ public class CommandParser {
     }
 
     public boolean verboseFeedback() {
-        return command.verboseFeedback();
+        return isWhisper || command.verboseFeedback();
+    }
+
+    public boolean isWhisper() {
+        return isWhisper;
     }
 
     public void send(String msg) {
-        parent.sendMessage(msg);
+        if (isWhisper) {
+            parent.sendWhisper(source.getUser(), msg);
+        } else {
+            parent.sendMessage(msg);
+        }
     }
 
     public void sendResponse(String msg) {
-        parent.sendMessage(source.getUser(), msg);
+        if (isWhisper) {
+            parent.sendWhisper(source.getUser(), msg);
+        } else {
+            parent.sendMessage(source.getUser(), msg);
+        }
     }
 
     public Command getCommand() {

@@ -46,6 +46,33 @@ public class MainListener implements TwirkListener {
         }
     }
 
+    @Override
+    public void onWhisper(TwitchMessage message) {
+        Command cmd = parser.parseWhisper(message);
+        if (cmd != null) {
+            if (cmd.canExecute(parser)) {
+                Logger.log("CMD -whisper @" + message.getUser().getDisplayName() + " " + message.getContent());
+                try {
+                    cmd.execute(parser);
+                } catch (CommandException ce) {
+                    Logger.warn("CER " + ce.getMessage());
+                    if (parser.verboseFeedback())
+                        parser.sendResponse("Error: " + ce.getMessage());
+                } catch (Exception e) {
+                    Logger.error("CFE " + e.getMessage());
+                    e.printStackTrace();
+                    if (parser.verboseFeedback())
+                        parser.sendResponse("Sorry, an unknown error occured.");
+                }
+            } else {
+                Logger.log("CMD -whisper -denied @" + message.getUser().getDisplayName() + " " + message.getContent());
+                cmd.onDenied(parser);
+            }
+        } else {
+            Logger.log("UWM @" + message.getUser().getDisplayName() + " " + message.getContent());
+        }
+    }
+
     public void sendMessage(String msg) {
         Logger.log("OUT " + msg);
         bot.channelMessage(msg);
@@ -53,6 +80,11 @@ public class MainListener implements TwirkListener {
 
     public void sendMessage(TwitchUser user, String msg) {
         sendMessage("@" + user.getDisplayName() + " " + msg);
+    }
+
+    public void sendWhisper(TwitchUser user, String msg) {
+        Logger.log("WPO @" + user.getDisplayName() + " " + msg);
+        bot.whisper(user, msg);
     }
 
     @Override

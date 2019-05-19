@@ -2,6 +2,7 @@ package dev.m00nl1ght.bot;
 
 import com.gikk.twirk.Twirk;
 import com.gikk.twirk.TwirkBuilder;
+import dev.m00nl1ght.bot.twist.TwistExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +20,7 @@ public class Main {
 
         final Twirk bot = new TwirkBuilder("#" + config.CHANNEL, config.USERNAME, config.OAUTH).setBotOwner(config.OWNER).build();
         final MainListener core = new MainListener(bot, config);
+        TwistExtension.register(core.commandManager); // optional channel-specific extension
         core.load();
         bot.addIrcListener(core);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> core.exit()));
