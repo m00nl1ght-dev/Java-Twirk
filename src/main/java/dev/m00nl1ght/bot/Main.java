@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class Main {
 
-    private static final String DEFAULT_PROFILE = "bot_testing";
+    private static final String DEFAULT_PROFILE = "default";
     private static final File PROFILE_DIR = new File("profile");
 
     public static void main(String[] args) throws IOException, InterruptedException {

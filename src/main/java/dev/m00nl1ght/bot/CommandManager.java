@@ -55,11 +55,11 @@ public class CommandManager {
         types.put(type.name, type);
     }
 
-    public void load(File traget) {
+    public void load(File target) {
         commands.clear();
-        if (traget.exists()) {
+        if (target.exists()) {
             try {
-                JSONTokener tokener = new JSONTokener(new FileReader(traget));
+                JSONTokener tokener = new JSONTokener(new FileReader(target));
                 JSONObject object = new JSONObject(tokener);
                 JSONArray comms = object.getJSONArray("commands");
                 for (int i = 0; i < comms.length(); i++) {
@@ -73,7 +73,7 @@ public class CommandManager {
         } else {
             Logger.log("Core profile does not exist, creating default one.");
             commands.put("mb", new CoreCommand(core, "mb"));
-            this.save(traget);
+            this.save(target);
         }
     }
 

@@ -19,6 +19,7 @@ public class Profile {
     public String OAUTH;
     public String CHANNEL;
     public String OWNER;
+    public String ABOUT;
 
     public int RECONNECT_DELAY_MIN;
     public int RECONNECT_DELAY_MAX;
@@ -38,6 +39,7 @@ public class Profile {
                 OAUTH = object.getString("oauth");
                 CHANNEL = object.getString("channel");
                 OWNER = object.getString("owner");
+                ABOUT = object.optString("about", "");
                 RECONNECT_DELAY_MIN = object.getInt("reconnect_delay_min");
                 RECONNECT_DELAY_MAX = object.getInt("reconnect_delay_max");
             } catch (Exception e) {
@@ -55,6 +57,7 @@ public class Profile {
             object.put("oauth", OAUTH);
             object.put("channel", CHANNEL);
             object.put("owner", OWNER);
+            object.put("about", ABOUT);
             object.put("reconnect_delay_min", RECONNECT_DELAY_MIN);
             object.put("reconnect_delay_max", RECONNECT_DELAY_MAX);
             FileWriter w = new FileWriter(CONFIG);

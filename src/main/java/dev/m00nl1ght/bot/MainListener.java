@@ -145,4 +145,8 @@ public class MainListener implements TwirkListener {
         commandManager.save(profile.backupFile());
     }
 
+    public String getBotInfo() {
+        return profile.ABOUT;
+    }
+
 }

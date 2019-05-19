@@ -12,6 +12,7 @@ public class CoreCommand extends ComplexCommand {
 
     public CoreCommand(MainListener parent, String name) {
         super(TYPE, parent, name);
+        this.addSubCommand(new About(parent, ""));
         CoreMaintanance.register(this);
         CoreCmdManagement.register(this);
     }
@@ -31,12 +32,27 @@ public class CoreCommand extends ComplexCommand {
 
         protected Type(String name) {
             super(name);
-            this.defaultPerm = USER_LEVEL.OWNER.value;
         }
 
         @Override
         protected CoreCommand createInstance(MainListener parent, String name) {
             return new CoreCommand(parent, name);
+        }
+
+    }
+
+    private static class About extends CoreSubCommand {
+
+        protected About(MainListener parent, String name) {
+            super(parent, name);
+            this.perm = USER_LEVEL.DEFAULT.value;
+            this.cooldown = 15000;
+        }
+
+        @Override
+        public void execute(CommandParser parser) {
+            String info = parent.getBotInfo();
+            if (!info.isEmpty()) parser.send(info);
         }
 
     }
