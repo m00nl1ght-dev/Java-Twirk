@@ -2,6 +2,7 @@ package dev.m00nl1ght.bot;
 
 import com.gikk.twirk.Twirk;
 import com.gikk.twirk.events.TwirkListener;
+import com.gikk.twirk.types.notice.Notice;
 import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.users.TwitchUser;
 import dev.m00nl1ght.bot.commands.Command;
@@ -71,6 +72,11 @@ public class MainListener implements TwirkListener {
         } else {
             Logger.log("UWM @" + message.getUser().getDisplayName() + " " + message.getContent());
         }
+    }
+
+    @Override
+    public void onNotice(Notice notice) {
+        Logger.warn("TIN " + notice.getMessage());
     }
 
     public void sendMessage(String msg) {
