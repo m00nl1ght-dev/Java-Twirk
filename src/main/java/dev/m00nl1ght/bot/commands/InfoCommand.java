@@ -19,7 +19,7 @@ public class InfoCommand extends TextCommand {
             parser.send(pattern.build(parser));
         } else {
             if (to.startsWith("@")) to = to.substring(1);
-            parser.send("@" + to + " " + pattern.build(parser));
+            parent.sendMessage("@" + to + " " + pattern.build(parser));
         }
     }
 
