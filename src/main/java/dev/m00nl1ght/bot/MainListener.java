@@ -159,4 +159,8 @@ public class MainListener implements TwirkListener {
         return bot;
     }
 
+    public String getGoogleAPI() {
+        return profile.GOOGLE_API_ID;
+    }
+
 }

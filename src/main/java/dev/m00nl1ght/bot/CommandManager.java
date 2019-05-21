@@ -29,6 +29,7 @@ public class CommandManager {
         registerType(InfoCommand.TYPE);
         registerType(CounterCommand.TYPE);
         registerType(QuickvoteCommand.TYPE);
+        registerType(TranslateCommand.TYPE);
     }
 
     public Command getCommand(String name) {
