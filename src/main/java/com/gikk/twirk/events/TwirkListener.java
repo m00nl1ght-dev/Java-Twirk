@@ -117,7 +117,6 @@ public interface TwirkListener {
      * mode notices every now and then, and does not reliably reflect a users current status
      *
      * @param mode The mode notice
-     * @deprecated Use the {@link TwitchUser#isMod()} method to track moderator status instead
      */
     default public void onMode(Mode mode) {
     }
