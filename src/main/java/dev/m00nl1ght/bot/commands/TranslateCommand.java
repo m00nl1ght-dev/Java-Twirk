@@ -34,7 +34,7 @@ public class TranslateCommand extends Command {
         if (res.isEmpty()) {
             parser.sendResponse("Translation failed.");
         } else {
-            parser.sendResponse("Translation ("+langTo+"): " + res);
+            parser.sendResponse("[" + langTo + "] " + res);
         }
     }
 
