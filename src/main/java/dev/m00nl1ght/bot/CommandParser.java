@@ -67,6 +67,19 @@ public class CommandParser {
         return res;
     }
 
+    public int nextParamInt(int or) {
+        return intOr(this.nextParam(), or);
+    }
+
+    public static int intOr(String s, int or) {
+        if (s.isEmpty()) return or;
+        try {
+            return Integer.parseInt(s);
+        } catch (Exception e) {
+            throw new CommandException("not a number: " + s);
+        }
+    }
+
     public String readAll() {
         while (pos < data.length() && Character.isWhitespace(data.charAt(pos))) {
             pos++;

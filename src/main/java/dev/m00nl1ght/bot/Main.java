@@ -20,7 +20,7 @@ public class Main {
 
         final Twirk bot = new TwirkBuilder("#" + config.CHANNEL, config.USERNAME, config.OAUTH).setBotOwner(config.OWNER).build();
         final MainListener core = new MainListener(bot, config);
-        TwistExtension.register(core.commandManager); // optional channel-specific extension
+        TwistExtension.register(core); // optional channel-specific extension
         core.load();
         bot.addIrcListener(core);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> core.exit()));

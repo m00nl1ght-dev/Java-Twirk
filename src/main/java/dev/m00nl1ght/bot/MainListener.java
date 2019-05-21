@@ -4,6 +4,7 @@ import com.gikk.twirk.Twirk;
 import com.gikk.twirk.events.TwirkListener;
 import com.gikk.twirk.types.notice.Notice;
 import com.gikk.twirk.types.twitchMessage.TwitchMessage;
+import com.gikk.twirk.types.usernotice.Usernotice;
 import com.gikk.twirk.types.users.TwitchUser;
 import dev.m00nl1ght.bot.commands.Command;
 
@@ -79,6 +80,11 @@ public class MainListener implements TwirkListener {
         Logger.warn("TIN " + notice.getMessage());
     }
 
+    @Override
+    public void onUsernotice(TwitchUser user, Usernotice usernotice) {
+        commandManager.onSubEvent(user, usernotice);
+    }
+
     public void sendMessage(String msg) {
         Logger.log("OUT " + msg);
         bot.channelMessage(msg);
@@ -147,6 +153,10 @@ public class MainListener implements TwirkListener {
 
     public String getBotInfo() {
         return profile.ABOUT;
+    }
+
+    public Twirk getBot() {
+        return bot;
     }
 
 }

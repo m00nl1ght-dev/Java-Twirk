@@ -1,5 +1,7 @@
 package dev.m00nl1ght.bot;
 
+import com.gikk.twirk.types.usernotice.Usernotice;
+import com.gikk.twirk.types.users.TwitchUser;
 import dev.m00nl1ght.bot.commands.*;
 import dev.m00nl1ght.bot.commands.core.CoreCommand;
 import org.json.JSONArray;
@@ -9,12 +11,15 @@ import org.json.JSONTokener;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class CommandManager {
 
     private final HashMap<String, Command.Type> types = new HashMap<>();
     private final HashMap<String, Command> commands = new HashMap<>();
+    private final List<ChannelEventHandler> subHandlers = new ArrayList<>();
     private final MainListener core;
 
     public CommandManager(MainListener core) {
@@ -23,6 +28,7 @@ public class CommandManager {
         registerType(TextCommand.TYPE);
         registerType(InfoCommand.TYPE);
         registerType(CounterCommand.TYPE);
+        registerType(QuickvoteCommand.TYPE);
     }
 
     public Command getCommand(String name) {
@@ -95,6 +101,14 @@ public class CommandManager {
             Logger.error("Failed to save commands!");
             e.printStackTrace();
         }
+    }
+
+    public void onSubEvent(TwitchUser user, Usernotice notice) {
+        for (ChannelEventHandler handler : subHandlers) handler.onUsernotice(user, notice);
+    }
+
+    public void register(ChannelEventHandler handler) {
+        subHandlers.add(handler);
     }
 
 }
