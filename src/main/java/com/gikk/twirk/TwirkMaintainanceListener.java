@@ -30,14 +30,14 @@ class TwirkMaintainanceListener implements TwirkListener {
 
     @Override
     public void onJoin(String joinedNick) {
-        if (!instance.online.add(joinedNick)) {
+        if (!instance.online.add(joinedNick.toLowerCase())) {
             System.out.println(" was already listed as online...." + "\tUser " + joinedNick);
         }
     }
 
     @Override
     public void onPart(String partedNick) {
-        if (!instance.online.remove(partedNick)) {
+        if (!instance.online.remove(partedNick.toLowerCase())) {
             System.out.println("\tUser " + partedNick + " was not listed as online....");
         }
     }

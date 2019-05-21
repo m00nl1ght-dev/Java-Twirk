@@ -15,10 +15,10 @@ public class InfoCommand extends TextCommand {
     @Override
     public void execute(CommandParser parser) {
         String to = parser.getParam(1);
-        if (to.isEmpty()) {
+        if (to.startsWith("@")) to = to.substring(1);
+        if (to.isEmpty() || !parent.getBot().isUserOnline(to)) {
             parser.send(pattern.build(parser));
         } else {
-            if (to.startsWith("@")) to = to.substring(1);
             parent.sendMessage("@" + to + " " + pattern.build(parser));
         }
     }

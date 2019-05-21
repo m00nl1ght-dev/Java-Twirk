@@ -217,6 +217,12 @@ public final class Twirk {
         return out;
     }
 
+    public boolean isUserOnline(String username) {
+        synchronized (online) {
+            return online.contains(username.toLowerCase());
+        }
+    }
+
     /**
      * Fetches a set of all the moderators that are <b>currently</b> online in the joined channel. Note that this set is
      * <b>copy</b> of the underlying set of online moderators. Thus, changes to the original set will not be visible
@@ -568,7 +574,7 @@ public final class Twirk {
                 case "353": {
                     //Code 353 is USER LIST messages, which lists users online separated by a space
                     List<String> users = Arrays.asList(message.getContent().split(" "));
-                    online.addAll(users);
+                    for (String u : users) online.add(u.toLowerCase());
                     break;
                 }
                 case "366": {
