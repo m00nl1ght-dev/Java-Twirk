@@ -1,6 +1,7 @@
 package dev.m00nl1ght.bot.commands.core;
 
 import dev.m00nl1ght.bot.CommandParser;
+import dev.m00nl1ght.bot.Logger;
 import dev.m00nl1ght.bot.MainListener;
 
 public class CoreMaintanance {
@@ -12,6 +13,8 @@ public class CoreMaintanance {
         core.addSubCommand(new Reload(core.parent, "reload"));
         core.addSubCommand(new Exit(core.parent, "exit"));
         core.addSubCommand(new Backup(core.parent, "backup"));
+        core.addSubCommand(new LogMode(core.parent, "log_mode"));
+        core.addSubCommand(new CleanLog(core.parent, "log_clean"));
     }
 
     static class Stop extends CoreSubCommand {
@@ -106,6 +109,39 @@ public class CoreMaintanance {
         public void execute(CommandParser parser) {
             parser.sendResponse("Creating backup...");
             parent.backup();
+        }
+
+    }
+
+    static class LogMode extends CoreSubCommand {
+
+        protected LogMode(MainListener parent, String name) {
+            super(parent, name);
+        }
+
+        @Override
+        public void execute(CommandParser parser) {
+            if (parent.logPrvMsg) {
+                parser.sendResponse("Disabled verbose log.");
+                parent.logPrvMsg = false;
+            } else {
+                parser.sendResponse("Enabled verbose log.");
+                parent.logPrvMsg = true;
+            }
+        }
+
+    }
+
+    static class CleanLog extends CoreSubCommand {
+
+        protected CleanLog(MainListener parent, String name) {
+            super(parent, name);
+        }
+
+        @Override
+        public void execute(CommandParser parser) {
+            parser.sendResponse("Cleaned up log file.");
+            Logger.cleanLog();
         }
 
     }

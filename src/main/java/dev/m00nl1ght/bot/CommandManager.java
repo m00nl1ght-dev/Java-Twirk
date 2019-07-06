@@ -30,6 +30,7 @@ public class CommandManager {
         registerType(CounterCommand.TYPE);
         registerType(QuickvoteCommand.TYPE);
         registerType(TranslateCommand.TYPE);
+        registerType(TimerCommand.TYPE);
     }
 
     public Command getCommand(String name) {

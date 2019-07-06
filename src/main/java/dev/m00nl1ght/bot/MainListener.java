@@ -15,6 +15,7 @@ public class MainListener implements TwirkListener {
     public final CommandManager commandManager = new CommandManager(this);
     public final CommandParser parser = new CommandParser(this);
     protected boolean active = true;
+    public boolean logPrvMsg = false;
 
     public MainListener(Twirk bot, Profile profile) {
         this.bot = bot;
@@ -45,6 +46,8 @@ public class MainListener implements TwirkListener {
                 Logger.log("CMD -denied @" + message.getUser().getDisplayName() + " " + message.getContent());
                 cmd.onDenied(parser);
             }
+        } else if (logPrvMsg) {
+            Logger.log("MSG @" + message.getUser().getDisplayName() + " " + message.getContent());
         }
     }
 
@@ -137,6 +140,7 @@ public class MainListener implements TwirkListener {
         bot.close();
         this.save();
         Logger.log("Finished.");
+        Logger.dispose();
     }
 
     public void save() {

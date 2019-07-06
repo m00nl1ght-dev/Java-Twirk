@@ -67,6 +67,10 @@ public class CommandParser {
         return res;
     }
 
+    public void skip() {
+        if (!params.isEmpty()) params.remove(params.size()-1);
+    }
+
     public int nextParamInt(int or) {
         return intOr(this.nextParam(), or);
     }
@@ -86,6 +90,15 @@ public class CommandParser {
         }
         if (pos >= data.length()) return "";
         return data.substring(pos);
+    }
+
+    public String getAllAfter(int id) {
+        String s = getParamOrNull(id), r; id++;
+        if (s == null) return null;
+        while (!(r = getParam(id)).isEmpty()) {
+            s += " " + r; id++;
+        }
+        return s;
     }
 
     public boolean verboseFeedback() {

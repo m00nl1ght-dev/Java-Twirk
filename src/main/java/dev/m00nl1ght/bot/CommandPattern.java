@@ -70,8 +70,13 @@ public class CommandPattern {
 
     private static Segment segmentArgument(String arg) {
         try {
-            int id = Integer.parseInt(arg);
-            return (p) -> p.getParamOrNull(id);
+            if (arg.endsWith("+")) {
+                int id = Integer.parseInt(arg.substring(0, arg.length() - 1));
+                return (p) -> p.getAllAfter(id);
+            } else {
+                int id = Integer.parseInt(arg);
+                return (p) -> p.getParamOrNull(id);
+            }
         } catch (Exception e) {
             return null;
         }

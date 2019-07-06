@@ -24,6 +24,7 @@ public class Main {
         core.load();
         bot.addIrcListener(core);
         Runtime.getRuntime().addShutdownHook(new Thread(() -> core.exit()));
+        if (!config.LOGFILE.isEmpty()) Logger.create(new File(config.LOGFILE));
         bot.connect();
 
     }
