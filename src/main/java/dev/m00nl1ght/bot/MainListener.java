@@ -111,7 +111,7 @@ public class MainListener implements TwirkListener {
     public void onDisconnect() {
         int delay = profile.RECONNECT_DELAY_MIN;
         Logger.warn("Disconnected! Trying to reconnect...");
-        while (true) {
+        while (!bot.isConnected()) {
             try {
                 if (bot.connect()) break;
             } catch (Exception e) {

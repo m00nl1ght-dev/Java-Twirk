@@ -5,7 +5,6 @@ import com.gikk.twirk.events.TwirkListener;
 import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import dev.m00nl1ght.bot.CommandException;
 import dev.m00nl1ght.bot.CommandParser;
-import dev.m00nl1ght.bot.CommandPattern;
 import dev.m00nl1ght.bot.MainListener;
 import org.json.JSONException;
 import org.json.JSONObject;

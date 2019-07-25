@@ -14,6 +14,7 @@ import com.gikk.twirk.types.users.UserstateBuilder;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.function.Supplier;
 
 /**
  * Class for creating instances of {@link Twirk}.<br>
@@ -53,7 +54,7 @@ public class TwirkBuilder {
     private UserstateBuilder userstateBuilder;
     private UsernoticeBuilder usernoticeBuilder;
     private ReconnectBuilder reconnectBuilder;
-    private Socket socket;
+    private SocketFactory socketFactory;
 
     //***********************************************************
     // 				CONSTRUCTOR
@@ -343,25 +344,25 @@ public class TwirkBuilder {
     }
 
     /**
-     * Retrives the assigned {@link Socket}, or a default one.
+     * Retrives the assigned {@link Socket} factory, or a default one.
      * The default one depends on whether you've decided to use SSL or not
      * (ssl defaults to true).
      *
      * @return This builder's current {@link SocketFactory}
      */
-    public Socket getSocket() {
-        return this.socket;
+    public SocketFactory getSocketFactory() {
+        return this.socketFactory;
     }
 
     /**
-     * Sets the {@link Socket}. Useful if you want to use your custom implementations of a {@link Socket}. If
-     * no {@link Socket} is assigned, the created {@link Twirk} object will chose a suitable {@link Socket} implementation.
+     * Sets the {@link SocketFactory}. Useful if you want to use your custom implementations of a {@link Socket}. If
+     * no {@link SocketFactory} is assigned, the created {@link Twirk} object will chose a suitable {@link Socket} implementation.
      *
-     * @param socket The {@link Socket} that Twirk should use
+     * @param socketFactory The {@link SocketFactory} that Twirk should use
      * @return this
      */
-    public TwirkBuilder setSocket(Socket socket) {
-        this.socket = socket;
+    public TwirkBuilder setSocket(SocketFactory socketFactory) {
+        this.socketFactory = socketFactory;
         return this;
     }
 
@@ -373,11 +374,11 @@ public class TwirkBuilder {
      * @throws IOException if no socket could be constructed
      */
     public Twirk build() throws IOException {
-        if (this.socket == null) {
+        if (this.socketFactory == null) {
             if (useSSL) {
-                this.socket = SSLSocketFactory.getDefault().createSocket(server, port);
+                this.socketFactory = () -> SSLSocketFactory.getDefault().createSocket(server, port);
             } else {
-                this.socket = new Socket(server, port);
+                this.socketFactory = () -> new Socket(server, port);
             }
         }
 

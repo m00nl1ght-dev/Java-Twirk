@@ -2,17 +2,14 @@ package dev.m00nl1ght.bot.commands;
 
 import dev.m00nl1ght.bot.CommandException;
 import dev.m00nl1ght.bot.CommandParser;
-import dev.m00nl1ght.bot.CommandPattern;
 import dev.m00nl1ght.bot.MainListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.stream.Collectors;
 

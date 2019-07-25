@@ -5,7 +5,6 @@ import sun.security.action.GetPropertyAction;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.security.AccessController;
 import java.text.SimpleDateFormat;
 import java.util.Date;
