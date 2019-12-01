@@ -13,6 +13,7 @@ import java.util.function.Function;
 public class TimerCommand extends ComplexCommand {
 
     public static final Type TYPE = new Type("timer");
+    public static final Type TYPE_CASUAL = new TypeCasual("timer_casual");
     public static final Function<String, CommandPattern.Segment> SEG_TIMER = TimerCommand::elapsedTimeSegment;
 
     protected CommandPattern pattern;
@@ -81,6 +82,30 @@ public class TimerCommand extends ComplexCommand {
         @Override
         protected TimerCommand createInstance(MainListener parent, String name) {
             return new TimerCommand(this, parent, name);
+        }
+
+    }
+
+    public static class TypeCasual extends Type {
+
+        protected TypeCasual(String name) {
+            super(name);
+        }
+
+        @Override
+        public TimerCommand build(MainListener parent, String name, String pattern) {
+            TimerCommand sc = super.build(parent, name, pattern);
+            sc.pattern = CommandPattern.compile(pattern, CommandPattern.SEG_STRING, CommandPattern.SEG_SENDER, SEG_TIMER);
+            sc.verboseFeedback = false;
+            sc.addSubCommand(sc.new Get(parent, "*"));
+            return sc;
+        }
+
+        @Override
+        protected TimerCommand createInstance(MainListener parent, String name) {
+            TimerCommand sc = new TimerCommand(this, parent, name);
+            sc.addSubCommand(sc.new Get(parent, "*"));
+            return sc;
         }
 
     }

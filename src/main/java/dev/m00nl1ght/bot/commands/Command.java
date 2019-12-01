@@ -14,6 +14,7 @@ public abstract class Command {
     public final MainListener parent;
     public final String name;
     protected int perm = USER_LEVEL.DEFAULT.value;
+    public int stat_total = 0, stat_fail = 0;
     protected boolean verboseFeedback = true;
     protected long lastExe = deafultTime;
     protected int cooldown = 0;
@@ -48,11 +49,15 @@ public abstract class Command {
     }
 
     public void load(JSONObject data) throws JSONException {
+        this.stat_total = data.optInt("stat_t", this.stat_total);
+        this.stat_fail = data.optInt("stat_f", this.stat_fail);
         this.perm = data.optInt("perm", this.perm);
         this.cooldown = data.optInt("cd", 0);
     }
 
     public void save(JSONObject data) throws JSONException {
+        data.put("stat_t", this.stat_total);
+        data.put("stat_f", this.stat_fail);
         data.put("perm", this.perm);
         if (cooldown > 0) data.put("cd", cooldown);
     }
@@ -67,6 +72,16 @@ public abstract class Command {
 
     public void setCooldown(int value) {
         this.cooldown = value;
+    }
+
+    public String printStats() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Used " + stat_total + " times, ");
+        sb.append("Failed " + stat_fail + " times, ");
+        sb.append("Perm level: " + perm + ", ");
+        sb.append("Cooldown: " + cooldown/1000 + "s, ");
+        sb.append("Type: " + (type==null ? "sub" : type.name) + (verboseFeedback?" (v)":""));
+        return sb.toString();
     }
 
     public static abstract class Type<T extends Command> {

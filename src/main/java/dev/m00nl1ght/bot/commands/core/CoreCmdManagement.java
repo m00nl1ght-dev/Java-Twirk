@@ -11,7 +11,9 @@ public class CoreCmdManagement {
         core.addSubCommand(new Set(core.parent, "set"));
         core.addSubCommand(new Delete(core.parent, "delete"));
         core.addSubCommand(new Perm(core.parent, "perm"));
+        core.addSubCommand(new Verbose(core.parent, "verbose"));
         core.addSubCommand(new Cooldown(core.parent, "cooldown"));
+        core.addSubCommand(new Stats(core.parent, "stats"));
     }
 
     static class Set extends CoreSubCommand {
@@ -106,9 +108,9 @@ public class CoreCmdManagement {
 
     }
 
-    static class Cooldown extends CoreSubCommand {
+    static class Verbose extends CoreSubCommand {
 
-        protected Cooldown(MainListener parent, String name) {
+        protected Verbose(MainListener parent, String name) {
             super(parent, name);
         }
 
@@ -124,18 +126,65 @@ public class CoreCmdManagement {
                 printUsage(parser);
                 return;
             }
-            int v = 0;
+            boolean v = false;
             try {
-                v = Integer.parseInt(val);
+                v = Boolean.parseBoolean(val.toLowerCase());
             } catch (Exception e) {
-                throw new CommandException("Invalid cooldown: " + val);
+                throw new CommandException("Invalid boolean: " + val);
             }
+            parser.getParent().commandManager.getCommandOrSub(name).setVerboseFeedback(v);
+            parser.sendResponse("Updated verbose flag for command !" + name);
+        }
+
+        private void printUsage(CommandParser parser) {
+            parser.sendResponse("Usage: !mb perm <command> <value>");
+        }
+
+    }
+
+    static class Cooldown extends CoreSubCommand {
+
+        protected Cooldown(MainListener parent, String name) {
+            super(parent, name);
+        }
+
+        @Override
+        public void execute(CommandParser parser) {
+            String name = parser.nextParam();
+            if (name.isEmpty()) {
+                printUsage(parser);
+                return;
+            }
+            int v = parser.nextParamInt();
             parser.getParent().commandManager.getCommandOrSub(name).setCooldown(v * 1000);
             parser.sendResponse("Updated cooldown for command !" + name);
         }
 
         private void printUsage(CommandParser parser) {
             parser.sendResponse("Usage: !mb cooldown <command> <value>");
+        }
+
+    }
+
+    static class Stats extends CoreSubCommand {
+
+        protected Stats(MainListener parent, String name) {
+            super(parent, name);
+        }
+
+        @Override
+        public void execute(CommandParser parser) {
+            String name = parser.nextParam();
+            if (name.isEmpty()) {
+                printUsage(parser);
+                return;
+            }
+            String stats = parser.getParent().commandManager.getCommandOrSub(name).printStats();
+            parser.sendResponse("!" + name + " -> " + stats);
+        }
+
+        private void printUsage(CommandParser parser) {
+            parser.sendResponse("Usage: !mb stats <command>");
         }
 
     }

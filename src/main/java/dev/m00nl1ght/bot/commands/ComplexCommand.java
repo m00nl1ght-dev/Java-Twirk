@@ -21,13 +21,19 @@ public abstract class ComplexCommand extends Command {
         String sc = parser.getParam(1);
         Command cmd = sub.get(sc.toLowerCase());
         if (cmd == null) {
-            parser.sendResponse("Usage: " + printUsage());
-            return;
+            cmd = sub.get("*");
+            if (cmd == null) {
+                parser.sendResponse("Usage: " + printUsage());
+                return;
+            }
         }
         if (cmd.isOnCooldown()) return;
         cmd.resetCooldown();
+        cmd.stat_total++;
         if (cmd.canExecute(parser)) {
+            cmd.stat_fail++; // not ideal, but it works
             cmd.execute(parser);
+            cmd.stat_fail--;
         } else {
             Logger.log("CMD -sub_denied " + parser.getSource().getContent());
             cmd.onDenied(parser);

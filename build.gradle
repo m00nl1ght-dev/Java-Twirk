@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'm00nl1ght.bot'
-version '1.32'
+version '1.6'
 
 sourceCompatibility = 1.8
 

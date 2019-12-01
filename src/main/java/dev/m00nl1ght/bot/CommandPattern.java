@@ -10,6 +10,7 @@ public class CommandPattern {
 
     public static final Function<String, Segment> SEG_STRING = CommandPattern::segmentString;
     public static final Function<String, Segment> SEG_ARGUMENT = CommandPattern::segmentArgument;
+    public static final Function<String, Segment> SEG_ARGUMENT_USERNAME = CommandPattern::segmentArgumentUsername;
     public static final Function<String, Segment> SEG_SENDER = CommandPattern::segmentSender;
     protected static final Pattern ARG_PATTERN = Pattern.compile("<(.*?)>");
     protected static final Segment EMPTY_SEGMENT = (p) -> "";
@@ -23,7 +24,7 @@ public class CommandPattern {
     }
 
     public static CommandPattern compile(String pattern) {
-        return compile(pattern, SEG_STRING, SEG_ARGUMENT, SEG_SENDER);
+        return compile(pattern, SEG_STRING, SEG_ARGUMENT, SEG_ARGUMENT_USERNAME, SEG_SENDER);
     }
 
     public static CommandPattern compile(String pattern, Function<String, Segment>... segmentProviders) {
@@ -77,6 +78,20 @@ public class CommandPattern {
                 int id = Integer.parseInt(arg);
                 return (p) -> p.getParamOrNull(id);
             }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static Segment segmentArgumentUsername(String arg) {
+        try {
+            if (!arg.startsWith("@")) return null;
+            arg = arg.substring(1);
+            int id = Integer.parseInt(arg);
+            return (p) -> {
+                String r = p.getParamOrNull(id);
+                return r.startsWith("@") ? r.substring(1) : r;
+            };
         } catch (Exception e) {
             return null;
         }

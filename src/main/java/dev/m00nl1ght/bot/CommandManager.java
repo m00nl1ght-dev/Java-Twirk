@@ -21,6 +21,7 @@ public class CommandManager {
     private final HashMap<String, Command> commands = new HashMap<>();
     private final List<ChannelEventHandler> subHandlers = new ArrayList<>();
     private final MainListener core;
+    private String highlightTerm = null;
 
     public CommandManager(MainListener core) {
         this.core = core;
@@ -31,6 +32,8 @@ public class CommandManager {
         registerType(QuickvoteCommand.TYPE);
         registerType(TranslateCommand.TYPE);
         registerType(TimerCommand.TYPE);
+        registerType(TimerCommand.TYPE_CASUAL);
+        registerType(AliasCommand.TYPE);
     }
 
     public Command getCommand(String name) {
@@ -75,6 +78,7 @@ public class CommandManager {
                     Command c = types.get(co.getString("type")).load(core, co);
                     commands.put(c.name, c);
                 }
+                this.highlightTerm = object.optString("highlightTerm", null);
             } catch (Exception e) {
                 throw new RuntimeException("Failed to load commands!", e);
             }
@@ -96,6 +100,7 @@ public class CommandManager {
                 comms.put(co);
             }
             object.put("commands", comms);
+            object.put("highlightTerm", highlightTerm == null ? "" : highlightTerm);
             FileWriter w = new FileWriter(target);
             w.write(object.toString(2));
             w.close();
@@ -111,6 +116,14 @@ public class CommandManager {
 
     public void register(ChannelEventHandler handler) {
         subHandlers.add(handler);
+    }
+
+    public String getHighlightTerm() {
+        return this.highlightTerm;
+    }
+
+    public void setHighlightTerm(String str) {
+        this.highlightTerm = str.isEmpty() ? null : str.toLowerCase();
     }
 
 }

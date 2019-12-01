@@ -8,6 +8,8 @@ import com.gikk.twirk.types.usernotice.Usernotice;
 import com.gikk.twirk.types.users.TwitchUser;
 import dev.m00nl1ght.bot.commands.Command;
 
+import java.io.File;
+
 public class MainListener implements TwirkListener {
 
     private final Twirk bot;
@@ -30,13 +32,16 @@ public class MainListener implements TwirkListener {
             if (cmd.canExecute(parser)) {
                 Logger.log("CMD @" + message.getUser().getDisplayName() + " " + message.getContent());
                 cmd.resetCooldown();
+                cmd.stat_total++;
                 try {
                     cmd.execute(parser);
                 } catch (CommandException ce) {
+                    cmd.stat_fail++;
                     Logger.warn("CER " + ce.getMessage());
                     if (parser.verboseFeedback())
                         parser.sendResponse("Error: " + ce.getMessage());
                 } catch (Exception e) {
+                    cmd.stat_fail++;
                     Logger.error("CFE " + e.getMessage());
                     e.printStackTrace();
                     if (parser.verboseFeedback())
@@ -48,6 +53,8 @@ public class MainListener implements TwirkListener {
             }
         } else if (logPrvMsg) {
             Logger.log("MSG @" + message.getUser().getDisplayName() + " " + message.getContent());
+        } else if (commandManager.getHighlightTerm() != null && message.getContent().toLowerCase().contains(commandManager.getHighlightTerm())) {
+            Logger.log("MSG @" + message.getUser().getDisplayName() + " " + message.getContent());
         }
     }
 
@@ -57,13 +64,16 @@ public class MainListener implements TwirkListener {
         if (cmd != null) {
             if (cmd.canExecute(parser)) {
                 Logger.log("CMD -whisper @" + message.getUser().getDisplayName() + " " + message.getContent());
+                cmd.stat_total++;
                 try {
                     cmd.execute(parser);
                 } catch (CommandException ce) {
+                    cmd.stat_fail++;
                     Logger.warn("CER " + ce.getMessage());
                     if (parser.verboseFeedback())
                         parser.sendResponse("Error: " + ce.getMessage());
                 } catch (Exception e) {
+                    cmd.stat_fail++;
                     Logger.error("CFE " + e.getMessage());
                     e.printStackTrace();
                     if (parser.verboseFeedback())
@@ -165,6 +175,10 @@ public class MainListener implements TwirkListener {
 
     public String getGoogleAPI() {
         return profile.GOOGLE_API_ID;
+    }
+
+    public File getDataFile(String name) {
+        return new File(profile.BASE, name);
     }
 
 }

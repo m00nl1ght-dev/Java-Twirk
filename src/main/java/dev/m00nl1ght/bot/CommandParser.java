@@ -21,10 +21,14 @@ public class CommandParser {
     }
 
     public Command parse(TwitchMessage source) {
-        if (!source.getContent().startsWith("!")) return null;
+        return parse(source, source.getContent());
+    }
+
+    public Command parse(TwitchMessage source, String cmd) {
+        if (!cmd.startsWith("!")) return null;
         this.source = source;
         this.params.clear();
-        this.data = source.getContent();
+        this.data = cmd;
         this.isWhisper = false;
         pos = 1;
         while (pos < data.length() && !Character.isWhitespace(data.charAt(pos))) {
@@ -80,7 +84,16 @@ public class CommandParser {
         try {
             return Integer.parseInt(s);
         } catch (Exception e) {
-            throw new CommandException("not a number: " + s);
+            throw new CommandException("Invalid argument: must be a number");
+        }
+    }
+
+    public int nextParamInt() {
+        try {
+            String n = nextParam();
+            return Integer.parseInt(n);
+        } catch (Exception e) {
+            throw new CommandException("Invalid argument: must be a number");
         }
     }
 
@@ -110,6 +123,10 @@ public class CommandParser {
     }
 
     public void send(String msg) {
+        if (msg.length() >= 500) {
+            msg = "Failed to send response (too  long)";
+        }
+
         if (isWhisper) {
             parent.sendWhisper(source.getUser(), msg);
         } else {
@@ -118,6 +135,10 @@ public class CommandParser {
     }
 
     public void sendResponse(String msg) {
+        if (msg.length() >= 500) {
+            msg = "Failed to send response (too  long)";
+        }
+
         if (isWhisper) {
             parent.sendWhisper(source.getUser(), msg);
         } else {

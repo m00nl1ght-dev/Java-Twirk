@@ -14,6 +14,7 @@ public class CoreMaintanance {
         core.addSubCommand(new Exit(core.parent, "exit"));
         core.addSubCommand(new Backup(core.parent, "backup"));
         core.addSubCommand(new LogMode(core.parent, "log_mode"));
+        core.addSubCommand(new SetHighlight(core.parent, "highlight"));
         core.addSubCommand(new CleanLog(core.parent, "log_clean"));
     }
 
@@ -128,6 +129,21 @@ public class CoreMaintanance {
                 parser.sendResponse("Enabled verbose log.");
                 parent.logPrvMsg = true;
             }
+        }
+
+    }
+
+    static class SetHighlight extends CoreSubCommand {
+
+        protected SetHighlight(MainListener parent, String name) {
+            super(parent, name);
+        }
+
+        @Override
+        public void execute(CommandParser parser) {
+            String str = parser.nextParam();
+            parser.sendResponse("Updated highlight term.");
+            parent.commandManager.setHighlightTerm(str);
         }
 
     }
