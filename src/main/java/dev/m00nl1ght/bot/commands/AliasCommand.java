@@ -21,7 +21,7 @@ public class AliasCommand extends Command {
     public void execute(CommandParser orgParser) {
         String full = command + " " + orgParser.readAll();
         CommandParser parser = new CommandParser(parent);
-        Command cmd = parser.parse(orgParser.getSource(), full);
+        Command cmd = parser.parse(orgParser.getSource(), full, orgParser.isWhisper());
         if (cmd != null) {
             if (cmd.isOnCooldown()) return;
             if (cmd.canExecute(parser)) {

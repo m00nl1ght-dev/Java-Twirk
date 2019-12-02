@@ -21,15 +21,15 @@ public class CommandParser {
     }
 
     public Command parse(TwitchMessage source) {
-        return parse(source, source.getContent());
+        return parse(source, source.getContent(), false);
     }
 
-    public Command parse(TwitchMessage source, String cmd) {
+    public Command parse(TwitchMessage source, String cmd, boolean isWhisper) {
         if (!cmd.startsWith("!")) return null;
         this.source = source;
         this.params.clear();
         this.data = cmd;
-        this.isWhisper = false;
+        this.isWhisper = isWhisper;
         pos = 1;
         while (pos < data.length() && !Character.isWhitespace(data.charAt(pos))) {
             pos++;
@@ -40,9 +40,7 @@ public class CommandParser {
     }
 
     public Command parseWhisper(TwitchMessage source) {
-        Command res = parse(source);
-        this.isWhisper = true;
-        return res;
+        return parse(source, source.getContent(), true);
     }
 
     public String getParam(int id) {
