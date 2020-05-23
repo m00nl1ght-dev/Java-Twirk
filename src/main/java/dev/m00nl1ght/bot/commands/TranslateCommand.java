@@ -31,7 +31,7 @@ public class TranslateCommand extends Command {
         if (res.isEmpty()) {
             parser.sendResponse("Translation failed.");
         } else {
-            parser.sendResponse("[" + langTo + "] " + res);
+            parser.sendResponse(from + " --> " + res + " [" + langTo + "]");
         }
     }
 
@@ -51,7 +51,7 @@ public class TranslateCommand extends Command {
             in.close();
             return response;
         } catch (Exception e) {
-            throw new CommandException("Could not connect to Google API");
+            throw new CommandException("Translation failed.");
         }
     }
 

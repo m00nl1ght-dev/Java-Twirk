@@ -1,8 +1,13 @@
 package dev.m00nl1ght.bot.commands.core;
 
+import dev.m00nl1ght.bot.CommandException;
 import dev.m00nl1ght.bot.CommandParser;
 import dev.m00nl1ght.bot.Logger;
 import dev.m00nl1ght.bot.MainListener;
+import dev.m00nl1ght.bot.listener.MsgListener;
+import dev.m00nl1ght.bot.listener.MsgListenerTypes;
+
+import java.util.function.Supplier;
 
 public class CoreMaintanance {
 
@@ -14,8 +19,9 @@ public class CoreMaintanance {
         core.addSubCommand(new Exit(core.parent, "exit"));
         core.addSubCommand(new Backup(core.parent, "backup"));
         core.addSubCommand(new LogMode(core.parent, "log_mode"));
-        core.addSubCommand(new SetHighlight(core.parent, "highlight"));
         core.addSubCommand(new CleanLog(core.parent, "log_clean"));
+        core.addSubCommand(new AddListener(core.parent, "add_listener"));
+        core.addSubCommand(new RemoveListener(core.parent, "remove_listener"));
     }
 
     static class Stop extends CoreSubCommand {
@@ -133,21 +139,6 @@ public class CoreMaintanance {
 
     }
 
-    static class SetHighlight extends CoreSubCommand {
-
-        protected SetHighlight(MainListener parent, String name) {
-            super(parent, name);
-        }
-
-        @Override
-        public void execute(CommandParser parser) {
-            String str = parser.nextParam();
-            parser.sendResponse("Updated highlight term.");
-            parent.commandManager.setHighlightTerm(str);
-        }
-
-    }
-
     static class CleanLog extends CoreSubCommand {
 
         protected CleanLog(MainListener parent, String name) {
@@ -158,6 +149,45 @@ public class CoreMaintanance {
         public void execute(CommandParser parser) {
             parser.sendResponse("Cleaned up log file.");
             Logger.cleanLog();
+        }
+
+    }
+
+    static class AddListener extends CoreSubCommand {
+
+        protected AddListener(MainListener parent, String name) {
+            super(parent, name);
+        }
+
+        @Override
+        public void execute(CommandParser parser) {
+            final String type = parser.nextParam();
+            if (type.isEmpty()) throw new CommandException("missing listener type");
+            final Supplier<MsgListener> listenerType = MsgListenerTypes.get(type);
+            if (listenerType == null) throw new CommandException("unknown listener type: " + type);
+            final MsgListener listener = listenerType.get();
+            listener.fromCommand(parser.readAll().split(" "));
+            parent.addMsgListener(listener);
+            parser.sendResponse("Added listener <" + listener.getName() + ">.");
+        }
+
+    }
+
+    static class RemoveListener extends CoreSubCommand {
+
+        protected RemoveListener(MainListener parent, String name) {
+            super(parent, name);
+        }
+
+        @Override
+        public void execute(CommandParser parser) {
+            final String name = parser.nextParam();
+            if (name.isEmpty()) throw new CommandException("missing listener name");
+            if (parent.removeMsgListener(name)) {
+                parser.sendResponse("Removed listener <" + name + ">.");
+            } else {
+                parser.sendResponse("No listener with name <" + name + "> found.");
+            }
         }
 
     }

@@ -21,6 +21,7 @@ public class Profile {
     public String OWNER;
     public String ABOUT;
     public String GOOGLE_API_ID;
+    public String STEAM_API_KEY;
     public String LOGFILE;
 
     public int RECONNECT_DELAY_MIN;
@@ -43,6 +44,7 @@ public class Profile {
                 OWNER = object.getString("owner");
                 ABOUT = object.optString("about", "");
                 GOOGLE_API_ID = object.optString("google_api", "");
+                STEAM_API_KEY = object.optString("steam_api", "");
                 LOGFILE = object.optString("log_file");
                 RECONNECT_DELAY_MIN = object.getInt("reconnect_delay_min");
                 RECONNECT_DELAY_MAX = object.getInt("reconnect_delay_max");
@@ -63,6 +65,7 @@ public class Profile {
             object.put("owner", OWNER);
             object.put("about", ABOUT);
             object.put("google_api", GOOGLE_API_ID);
+            object.put("steam_api", STEAM_API_KEY);
             object.put("log_file", LOGFILE);
             object.put("reconnect_delay_min", RECONNECT_DELAY_MIN);
             object.put("reconnect_delay_max", RECONNECT_DELAY_MAX);

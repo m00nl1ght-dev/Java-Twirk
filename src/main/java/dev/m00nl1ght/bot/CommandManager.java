@@ -4,7 +4,9 @@ import com.gikk.twirk.types.usernotice.Usernotice;
 import com.gikk.twirk.types.users.TwitchUser;
 import dev.m00nl1ght.bot.commands.*;
 import dev.m00nl1ght.bot.commands.core.CoreCommand;
+import dev.m00nl1ght.bot.listener.HighlightTermListener;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -21,7 +23,6 @@ public class CommandManager {
     private final HashMap<String, Command> commands = new HashMap<>();
     private final List<ChannelEventHandler> subHandlers = new ArrayList<>();
     private final MainListener core;
-    private String highlightTerm = null;
 
     public CommandManager(MainListener core) {
         this.core = core;
@@ -66,48 +67,31 @@ public class CommandManager {
         types.put(type.name, type);
     }
 
-    public void load(File target) {
+    public void load(JSONObject data) throws JSONException {
         commands.clear();
-        if (target.exists()) {
-            try {
-                JSONTokener tokener = new JSONTokener(new FileReader(target));
-                JSONObject object = new JSONObject(tokener);
-                JSONArray comms = object.getJSONArray("commands");
-                for (int i = 0; i < comms.length(); i++) {
-                    JSONObject co = comms.getJSONObject(i);
-                    Command c = types.get(co.getString("type")).load(core, co);
-                    commands.put(c.name, c);
-                }
-                this.highlightTerm = object.optString("highlightTerm", null);
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to load commands!", e);
-            }
-        } else {
-            Logger.log("Core profile does not exist, creating default one.");
-            commands.put("mb", new CoreCommand(core, "mb"));
-            this.save(target);
+        JSONArray comms = data.getJSONArray("commands");
+        for (int i = 0; i < comms.length(); i++) {
+            JSONObject co = comms.getJSONObject(i);
+            Command c = types.get(co.getString("type")).load(core, co);
+            commands.put(c.name, c);
         }
     }
 
-    public void save(File target) {
-        try {
-            target.delete();
-            JSONObject object = new JSONObject();
-            JSONArray comms = new JSONArray();
-            for (Command c : commands.values()) {
-                JSONObject co = c.type.save(c);
-                co.put("type", c.type.name);
-                comms.put(co);
-            }
-            object.put("commands", comms);
-            object.put("highlightTerm", highlightTerm == null ? "" : highlightTerm);
-            FileWriter w = new FileWriter(target);
-            w.write(object.toString(2));
-            w.close();
-        } catch (Exception e) {
-            Logger.error("Failed to save commands!");
-            e.printStackTrace();
+    public JSONObject save() throws JSONException {
+        JSONObject object = new JSONObject();
+        JSONArray comms = new JSONArray();
+        for (Command c : commands.values()) {
+            JSONObject co = c.type.save(c);
+            co.put("type", c.type.name);
+            comms.put(co);
         }
+        object.put("commands", comms);
+        return object;
+    }
+
+    public void loadDefault() {
+        commands.clear();
+        commands.put("mb", new CoreCommand(core, "mb"));
     }
 
     public void onSubEvent(TwitchUser user, Usernotice notice) {
@@ -116,14 +100,6 @@ public class CommandManager {
 
     public void register(ChannelEventHandler handler) {
         subHandlers.add(handler);
-    }
-
-    public String getHighlightTerm() {
-        return this.highlightTerm;
-    }
-
-    public void setHighlightTerm(String str) {
-        this.highlightTerm = str.isEmpty() ? null : str.toLowerCase();
     }
 
 }

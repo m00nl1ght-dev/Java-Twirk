@@ -6,16 +6,27 @@ import com.gikk.twirk.types.notice.Notice;
 import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.usernotice.Usernotice;
 import com.gikk.twirk.types.users.TwitchUser;
+import dev.m00nl1ght.bot.answers.AnswersManager;
 import dev.m00nl1ght.bot.commands.Command;
+import dev.m00nl1ght.bot.listener.MsgListener;
+import dev.m00nl1ght.bot.listener.MsgListenerTypes;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainListener implements TwirkListener {
 
     private final Twirk bot;
     private final Profile profile;
     public final CommandManager commandManager = new CommandManager(this);
+    public final AnswersManager answersManager = new AnswersManager(this);
     public final CommandParser parser = new CommandParser(this);
+    public final Map<String, MsgListener> msgListeners = new HashMap<>();
     protected boolean active = true;
     public boolean logPrvMsg = false;
 
@@ -47,15 +58,22 @@ public class MainListener implements TwirkListener {
                     if (parser.verboseFeedback())
                         parser.sendResponse("Sorry, an unknown error occured.");
                 }
-            } else {
+            }
+            else {
                 Logger.log("CMD -denied @" + message.getUser().getDisplayName() + " " + message.getContent());
                 cmd.onDenied(parser);
             }
+        } else if (!checkMsgListeners(message) && answersManager.onMessage(message)) {
+            Logger.log("AWQ " + message.getContent());
         } else if (logPrvMsg) {
             Logger.log("MSG @" + message.getUser().getDisplayName() + " " + message.getContent());
-        } else if (commandManager.getHighlightTerm() != null && message.getContent().toLowerCase().contains(commandManager.getHighlightTerm())) {
-            Logger.log("MSG @" + message.getUser().getDisplayName() + " " + message.getContent());
         }
+    }
+
+    private boolean checkMsgListeners(TwitchMessage msg) {
+        for (MsgListener listener : msgListeners.values())
+            if (listener.onMsg(msg)) return true;
+        return false;
     }
 
     @Override
@@ -154,15 +172,53 @@ public class MainListener implements TwirkListener {
     }
 
     public void save() {
-        commandManager.save(profile.CORE);
+        save(profile.CORE);
+    }
+
+    public void save(File target) {
+        try {
+            target.delete();
+            JSONObject object = new JSONObject();
+            object.put("cmd", commandManager.save());
+            object.put("aws", answersManager.save());
+            object.put("listeners", MsgListenerTypes.save(this));
+            FileWriter w = new FileWriter(target);
+            w.write(object.toString(2));
+            w.close();
+        } catch (Exception e) {
+            Logger.error("Failed to save profile!");
+            e.printStackTrace();
+        }
     }
 
     public void load() {
-        commandManager.load(profile.CORE);
+        load(profile.CORE);
+    }
+
+    public void load(File target) {
+        if (target.exists()) {
+            try {
+                JSONTokener tokener = new JSONTokener(new FileReader(target));
+                JSONObject object = new JSONObject(tokener);
+                if (!object.has("cmd")) { // old format
+                    commandManager.load(object);
+                } else {
+                    commandManager.load(object.getJSONObject("cmd"));
+                    answersManager.load(object.getJSONObject("aws"));
+                    MsgListenerTypes.load(this, object.optJSONObject("listeners"));
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to load profile!", e);
+            }
+        } else {
+            Logger.log("Core profile does not exist, creating default one.");
+            commandManager.loadDefault();
+            this.save(target);
+        }
     }
 
     public void backup() {
-        commandManager.save(profile.backupFile());
+        save(profile.backupFile());
     }
 
     public String getBotInfo() {
@@ -177,8 +233,20 @@ public class MainListener implements TwirkListener {
         return profile.GOOGLE_API_ID;
     }
 
+    public String getSteamAPI() {
+        return profile.STEAM_API_KEY;
+    }
+
     public File getDataFile(String name) {
         return new File(profile.BASE, name);
+    }
+
+    public void addMsgListener(MsgListener listener) {
+        msgListeners.put(listener.getName(), listener);
+    }
+
+    public boolean removeMsgListener(String name) {
+        return msgListeners.remove(name) != null;
     }
 
 }

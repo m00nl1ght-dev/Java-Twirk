@@ -60,11 +60,13 @@ public class CommandParser {
             pos++;
         }
         int i = pos;
-        while (pos < data.length() && !Character.isWhitespace(data.charAt(pos))) {
+        boolean q = false;
+        while (pos < data.length() && (q || !Character.isWhitespace(data.charAt(pos)))) {
+            if (data.charAt(pos) == '"') q = !q;
             pos++;
         }
         if (i >= pos) return "";
-        String res = data.substring(i, pos);
+        String res = data.substring(i, pos).replace("\"", "");
         params.add(res);
         return res;
     }

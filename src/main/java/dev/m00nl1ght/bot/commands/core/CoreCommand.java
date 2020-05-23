@@ -15,6 +15,7 @@ public class CoreCommand extends ComplexCommand {
         this.addSubCommand(new About(parent, ""));
         CoreMaintanance.register(this);
         CoreCmdManagement.register(this);
+        CoreAwsManagement.register(this);
     }
 
     @Override
@@ -55,6 +56,11 @@ public class CoreCommand extends ComplexCommand {
             if (!info.isEmpty()) parser.send(info);
         }
 
+    }
+
+    @Override
+    public String printUsage() {
+        return "!mb <option> [params]";
     }
 
 }
