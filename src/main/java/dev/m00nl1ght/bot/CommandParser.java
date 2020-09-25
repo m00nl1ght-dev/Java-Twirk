@@ -128,9 +128,9 @@ public class CommandParser {
         }
 
         if (isWhisper) {
-            parent.sendWhisper(source.getUser(), msg);
+            parent.sendWhisper(source.getUser(), msg.trim());
         } else {
-            parent.sendMessage(msg);
+            parent.sendMessage(msg.trim());
         }
     }
 
@@ -140,9 +140,9 @@ public class CommandParser {
         }
 
         if (isWhisper) {
-            parent.sendWhisper(source.getUser(), msg);
+            parent.sendWhisper(source.getUser(), msg.trim());
         } else {
-            parent.sendMessage(source.getUser(), msg);
+            parent.sendMessage(source.getUser(), msg.trim());
         }
     }
 

@@ -18,6 +18,19 @@ public class SearchUtil {
         return bestO == null ? Optional.empty() : Optional.ofNullable(map.get(bestO));
     }
 
+    public static Optional<String> findMatchKey(Map<String, ?> map, String query, double threshold) {
+        final Object ret = map.get(query);
+        if (ret != null) return Optional.of(query);
+        double bestV = 0D; String bestO = null;
+        for (String s : map.keySet()) {
+            double d = similarity(s, query);
+            if (d > threshold && d > bestV) {
+                bestO = s; bestV = d;
+            }
+        }
+        return bestO == null ? Optional.empty() : Optional.ofNullable(bestO);
+    }
+
     public static double similarity(String s1, String s2) {
         String longer = s1, shorter = s2;
         if (s1.length() < s2.length()) {longer = s2; shorter = s1;}

@@ -22,6 +22,7 @@ public class Profile {
     public String ABOUT;
     public String GOOGLE_API_ID;
     public String STEAM_API_KEY;
+    public String TWITCH_CLIENT_ID;
     public String LOGFILE;
 
     public int RECONNECT_DELAY_MIN;
@@ -45,6 +46,7 @@ public class Profile {
                 ABOUT = object.optString("about", "");
                 GOOGLE_API_ID = object.optString("google_api", "");
                 STEAM_API_KEY = object.optString("steam_api", "");
+                TWITCH_CLIENT_ID = object.optString("client_id", "");
                 LOGFILE = object.optString("log_file");
                 RECONNECT_DELAY_MIN = object.getInt("reconnect_delay_min");
                 RECONNECT_DELAY_MAX = object.getInt("reconnect_delay_max");
@@ -66,6 +68,7 @@ public class Profile {
             object.put("about", ABOUT);
             object.put("google_api", GOOGLE_API_ID);
             object.put("steam_api", STEAM_API_KEY);
+            object.put("client_id", TWITCH_CLIENT_ID);
             object.put("log_file", LOGFILE);
             object.put("reconnect_delay_min", RECONNECT_DELAY_MIN);
             object.put("reconnect_delay_max", RECONNECT_DELAY_MAX);

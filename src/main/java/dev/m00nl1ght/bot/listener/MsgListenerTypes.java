@@ -15,6 +15,7 @@ public class MsgListenerTypes {
 
     static {
         register(HighlightTermListener.ID, HighlightTermListener::new);
+        register(UserBufferListener.ID, UserBufferListener::new);
     }
 
     public static void register(String id, Supplier<MsgListener> factory) {

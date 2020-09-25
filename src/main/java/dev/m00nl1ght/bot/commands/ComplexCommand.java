@@ -23,7 +23,7 @@ public abstract class ComplexCommand extends Command {
         if (cmd == null) {
             cmd = sub.get("*");
             if (cmd == null) {
-                parser.sendResponse("Usage: " + printUsage());
+                if (verboseFeedback) parser.sendResponse("Usage: " + printUsage());
                 return;
             }
         }

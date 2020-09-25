@@ -29,12 +29,16 @@ public class CommandManager {
         registerType(CoreCommand.TYPE);
         registerType(TextCommand.TYPE);
         registerType(InfoCommand.TYPE);
+        registerType(GoogleCommand.TYPE);
         registerType(CounterCommand.TYPE);
         registerType(QuickvoteCommand.TYPE);
         registerType(TranslateCommand.TYPE);
         registerType(TimerCommand.TYPE);
         registerType(TimerCommand.TYPE_CASUAL);
+        registerType(CountdownCommand.TYPE);
         registerType(AliasCommand.TYPE);
+        registerType(QuotesCommand.TYPE);
+        registerType(ClipCommand.TYPE);
     }
 
     public Command getCommand(String name) {

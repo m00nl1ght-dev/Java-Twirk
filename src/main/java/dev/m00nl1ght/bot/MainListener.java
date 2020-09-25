@@ -2,7 +2,11 @@ package dev.m00nl1ght.bot;
 
 import com.gikk.twirk.Twirk;
 import com.gikk.twirk.events.TwirkListener;
+import com.gikk.twirk.types.clearChat.ClearChat;
+import com.gikk.twirk.types.hostTarget.HostTarget;
+import com.gikk.twirk.types.mode.Mode;
 import com.gikk.twirk.types.notice.Notice;
+import com.gikk.twirk.types.roomstate.Roomstate;
 import com.gikk.twirk.types.twitchMessage.TwitchMessage;
 import com.gikk.twirk.types.usernotice.Usernotice;
 import com.gikk.twirk.types.users.TwitchUser;
@@ -10,6 +14,7 @@ import dev.m00nl1ght.bot.answers.AnswersManager;
 import dev.m00nl1ght.bot.commands.Command;
 import dev.m00nl1ght.bot.listener.MsgListener;
 import dev.m00nl1ght.bot.listener.MsgListenerTypes;
+import dev.m00nl1ght.bot.util.TwitchAPI;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -18,21 +23,24 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class MainListener implements TwirkListener {
 
     private final Twirk bot;
     private final Profile profile;
+    private final TwitchAPI twitchAPI;
     public final CommandManager commandManager = new CommandManager(this);
     public final AnswersManager answersManager = new AnswersManager(this);
     public final CommandParser parser = new CommandParser(this);
     public final Map<String, MsgListener> msgListeners = new HashMap<>();
     protected boolean active = true;
-    public boolean logPrvMsg = false;
+    public boolean logVerbose = false;
 
     public MainListener(Twirk bot, Profile profile) {
         this.bot = bot;
         this.profile = profile;
+        this.twitchAPI = new TwitchAPI(profile.TWITCH_CLIENT_ID);
     }
 
     @Override
@@ -65,7 +73,7 @@ public class MainListener implements TwirkListener {
             }
         } else if (!checkMsgListeners(message) && answersManager.onMessage(message)) {
             Logger.log("AWQ " + message.getContent());
-        } else if (logPrvMsg) {
+        } else if (logVerbose) {
             Logger.log("MSG @" + message.getUser().getDisplayName() + " " + message.getContent());
         }
     }
@@ -109,6 +117,33 @@ public class MainListener implements TwirkListener {
     @Override
     public void onNotice(Notice notice) {
         Logger.warn("TIN " + notice.getMessage());
+    }
+
+    @Override
+    public void onClearChat(ClearChat clearChat) {
+        Logger.warn("PRG @" + clearChat.getTarget() + " ( " + clearChat.getDuration() + " ) " + clearChat.getReason());
+    }
+
+    @Override
+    public void onRoomstate(Roomstate roomstate) {
+        if (logVerbose)
+            Logger.warn("RMS LANG=" + roomstate.getBroadcasterLanguage() + " 9k=" + roomstate.get9kMode() + " SLOWMODE=" + roomstate.getSlowModeTimer() + " SUBMODE=" + roomstate.getSubMode());
+    }
+
+    @Override
+    public void onMode(Mode mode) {
+        Logger.warn("MOD @" + mode.getUser() + " " + mode.getEvent());
+    }
+
+    @Override
+    public void onHost(HostTarget hostNotice) {
+        Logger.warn("HOS @" + hostNotice.getTarget() + " " + hostNotice.getMode() + " " + hostNotice.getViewerCount());
+    }
+
+    @Override
+    public void onUnknown(String unformatedMessage) {
+        if (logVerbose)
+            Logger.error("UNK " + unformatedMessage);
     }
 
     @Override
@@ -203,9 +238,9 @@ public class MainListener implements TwirkListener {
                 if (!object.has("cmd")) { // old format
                     commandManager.load(object);
                 } else {
+                    MsgListenerTypes.load(this, object.optJSONObject("listeners"));
                     commandManager.load(object.getJSONObject("cmd"));
                     answersManager.load(object.getJSONObject("aws"));
-                    MsgListenerTypes.load(this, object.optJSONObject("listeners"));
                 }
             } catch (Exception e) {
                 throw new RuntimeException("Failed to load profile!", e);
@@ -243,6 +278,17 @@ public class MainListener implements TwirkListener {
 
     public void addMsgListener(MsgListener listener) {
         msgListeners.put(listener.getName(), listener);
+    }
+
+    public <T extends MsgListener> T getOrCreateListener(String name, String type, Class<T> clazz) {
+        MsgListener msgListener = msgListeners.get(name);
+        if (msgListener == null) {
+            final Supplier<MsgListener> factory = MsgListenerTypes.get(type);
+            if (factory == null) throw new IllegalStateException("missing listener type: " + type);
+            msgListener = factory.get();
+            addMsgListener(msgListener);
+        }
+        return (T) msgListener;
     }
 
     public boolean removeMsgListener(String name) {

@@ -128,12 +128,12 @@ public class CoreMaintanance {
 
         @Override
         public void execute(CommandParser parser) {
-            if (parent.logPrvMsg) {
+            if (parent.logVerbose) {
                 parser.sendResponse("Disabled verbose log.");
-                parent.logPrvMsg = false;
+                parent.logVerbose = false;
             } else {
                 parser.sendResponse("Enabled verbose log.");
-                parent.logPrvMsg = true;
+                parent.logVerbose = true;
             }
         }
 
