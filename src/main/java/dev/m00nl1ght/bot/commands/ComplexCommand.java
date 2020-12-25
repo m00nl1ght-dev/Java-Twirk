@@ -35,7 +35,7 @@ public abstract class ComplexCommand extends Command {
             cmd.execute(parser);
             cmd.stat_fail--;
         } else {
-            Logger.log("CMD -sub_denied " + parser.getSource().getContent());
+            Logger.log("CMD -sub_denied " + parser.getCommand());
             cmd.onDenied(parser);
         }
     }

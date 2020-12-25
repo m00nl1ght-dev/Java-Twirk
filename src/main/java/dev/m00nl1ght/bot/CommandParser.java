@@ -39,8 +39,8 @@ public class CommandParser {
         return command;
     }
 
-    public Command parseWhisper(TwitchMessage source) {
-        return parse(source, source.getContent(), true);
+    public Command parseWhisper(TwitchMessage source, int offsetPos) {
+        return parse(source, source.getContent().substring(offsetPos), true);
     }
 
     public String getParam(int id) {

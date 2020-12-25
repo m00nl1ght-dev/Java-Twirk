@@ -36,6 +36,7 @@ public class MainListener implements TwirkListener {
     public final Map<String, MsgListener> msgListeners = new HashMap<>();
     protected boolean active = true;
     public boolean logVerbose = false;
+    private String whisperPrefix = "";
 
     public MainListener(Twirk bot, Profile profile) {
         this.bot = bot;
@@ -86,7 +87,8 @@ public class MainListener implements TwirkListener {
 
     @Override
     public void onWhisper(TwitchMessage message) {
-        Command cmd = parser.parseWhisper(message);
+        if (!message.getContent().startsWith(whisperPrefix)) return;
+        Command cmd = parser.parseWhisper(message, whisperPrefix.length());
         if (cmd != null) {
             if (cmd.canExecute(parser)) {
                 Logger.log("CMD -whisper @" + message.getUser().getDisplayName() + " " + message.getContent());
@@ -214,6 +216,7 @@ public class MainListener implements TwirkListener {
         try {
             target.delete();
             JSONObject object = new JSONObject();
+            object.put("whisperPrefix", whisperPrefix);
             object.put("cmd", commandManager.save());
             object.put("aws", answersManager.save());
             object.put("listeners", MsgListenerTypes.save(this));
@@ -235,6 +238,7 @@ public class MainListener implements TwirkListener {
             try {
                 JSONTokener tokener = new JSONTokener(new FileReader(target));
                 JSONObject object = new JSONObject(tokener);
+                this.whisperPrefix = object.optString("whisperPrefix", "");
                 if (!object.has("cmd")) { // old format
                     commandManager.load(object);
                 } else {
