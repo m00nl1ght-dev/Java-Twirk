@@ -1,6 +1,3 @@
-LICENSE
-*.md
-
 *.jar
 *.war
 *.ear
@@ -9,14 +6,10 @@ hs_err_pid*
 
 .idea/
 *.iml
-gradlew
-gradlew.bat
 out/
 
-gradle/
 .gradle/
 /build/
 
 profile/
 log.txt
-/src/main/java/dev/m00nl1ght/bot/twist/

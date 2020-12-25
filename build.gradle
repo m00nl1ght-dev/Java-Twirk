@@ -2,8 +2,8 @@ plugins {
     id 'java'
 }
 
-group 'm00nl1ght.bot'
-version '1.98'
+group 'dev.m00nl1ght.bot'
+version '1.100'
 
 sourceCompatibility = 1.8
 
@@ -12,7 +12,7 @@ repositories {
 }
 
 dependencies {
-    compile group: 'org.json', name: 'json', version: '20090211'
+    compile group: 'org.json', name: 'json', version: '20200518'
 }
 
 task customFatJar(type: Jar) {

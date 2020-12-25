@@ -17,10 +17,8 @@ public class HighlightTermListener implements MsgListener {
         if (term == null) return false;
         if (msg.getContent().toLowerCase().contains(term)) {
             Logger.log("HLT " + msg.getContent());
-            return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     @Override
