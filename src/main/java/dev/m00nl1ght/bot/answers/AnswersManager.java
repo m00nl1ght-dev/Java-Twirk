@@ -25,11 +25,12 @@ public class AnswersManager {
         final String msg = message.getContent().toLowerCase();
         final int q = msg.indexOf('?');
         if (q < 0) return false;
-        if (q < msg.length() * 0.55) return false;
+        // if (q < msg.length() * 0.55) return false;
 
+        final String rMsg = " " + msg.replace('?', ' ');
         for (final Answer a : answers.values()) {
             for (final Trigger trg : a.triggers) {
-                if (trg.test(msg, q)) {
+                if (trg.test(rMsg, q + 1)) {
                     if (a.lastTrigger + a.cooldown > System.currentTimeMillis()) return false;
 
                     if (!a.response.isEmpty()) {

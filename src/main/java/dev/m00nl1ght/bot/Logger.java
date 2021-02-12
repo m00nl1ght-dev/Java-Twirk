@@ -5,8 +5,10 @@ import sun.security.action.GetPropertyAction;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.security.AccessController;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.util.Date;
 
 public class Logger {
@@ -14,6 +16,7 @@ public class Logger {
     private static FileWriter outWriter;
     private static File outFile;
     private static final SimpleDateFormat logFormat = new SimpleDateFormat("MM-dd HH:mm:ss");
+    private static final SimpleDateFormat fileFormat = new SimpleDateFormat("MM-dd_HH-mm-ss");
     private static final String lineSeperator = AccessController.doPrivileged(new GetPropertyAction("line.separator"));
 
     public static void log(String msg, Object... obj) {
@@ -42,7 +45,13 @@ public class Logger {
     }
 
     public static void create(File file) {
+        if (file.exists()) {
+            String date = logFormat.format(Date.from(Instant.now()));
+            file.renameTo(new File(file.getParentFile(), date + ".txt"));
+        }
+
         outFile = file;
+
         try {
             outWriter = new FileWriter(file);
         } catch (IOException e) {

@@ -188,7 +188,10 @@ public class MainListener implements TwirkListener {
             } catch (Exception e) {
             }
             delay *= 2;
-            if (delay > profile.RECONNECT_DELAY_MAX) delay = profile.RECONNECT_DELAY_MAX;
+            if (delay > profile.RECONNECT_DELAY_MAX) {
+                this.save();
+                System.exit(71);
+            }
         }
     }
 
