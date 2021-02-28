@@ -39,6 +39,7 @@ public class CommandManager {
         registerType(AliasCommand.TYPE);
         registerType(QuotesCommand.TYPE);
         registerType(ClipCommand.TYPE);
+        registerType(MapLookupCommand.TYPE);
     }
 
     public Command getCommand(String name) {
